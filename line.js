@@ -33,7 +33,6 @@ class Line {
 				let newWord = new Word([newCharacter]);
 				this.words.push(newWord);
 				newWord.grabCaret(caret, true);
-				console.log(caret);
 				return true;
 			}
 			else {
