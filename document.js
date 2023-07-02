@@ -34,6 +34,7 @@ class CalumDocument extends HTMLCanvasElement {
 	}
 
 	handleKey(event){
+		console.log(event.key);
 		event.preventDefault();
 		if (this.modifierKeys.includes(event.key)){
 			return;
