@@ -2,10 +2,23 @@
 <html>
 <head>
 	<link rel="stylesheet" href="styles.css"/>
-	<script src="./document.js"></script>
+	<script src="./caret.js"></script>
+	<script src="./contentCaret.js"></script>
+	<script src="./documentContent.js"></script>
+	<script src="./page.js"></script>
+	<script src="./line.js"></script>
+	<script src="./word.js"></script>
 	<script src="./character.js"></script>
 </head>
 <body>
-	<canvas is="calum-document"></canvas>
+	<canvas></canvas>
+	<p>hello world</p>
+	<input type="number"/>
+	<script>
+		var canvas = document.querySelector("canvas");
+		var globalCanvasContext = canvas.getContext("2d");
+		var caret = new Caret();
+		
+	</script>
 </body>
 </html>
