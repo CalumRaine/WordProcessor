@@ -63,6 +63,10 @@ class Word {
 		return true;
 	}
 
+	appendCharacters(caret, newCharacters){
+		this.characters = Array.concat(this.characters, newCharacters);
+	}
+
 	getCaretIndex(caret){
 		return this.characters.findIndex(c => c == caret.character);
 	}
@@ -73,6 +77,20 @@ class Word {
 
 	caretAtEnd(caret){
 		return this.getCaretIndex(caret) == this.LastIndex;
+	}
+
+	backspaceCharacter(caret){
+		let index = this.getCaretIndex(caret);
+		let character = this.characters[index];
+		this.characters.splice(index, 1);
+		return index == 1 ? !this.Empty : this.characters[index-1].grabCaret(caret);
+	}
+
+	backspaceWord(caret){
+		let index = this.getCaretIndex(caret);
+		let toDelete = index + 1;
+		this.characters.splice(0, toDelete);
+		return this.Empty ? false : this.grabCaret(caret, false);
 	}
 
 	left(caret){
