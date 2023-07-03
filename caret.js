@@ -37,7 +37,7 @@ class Caret {
 			this.handleEnter(event);
 		}
 		else if (event.key == "Backspace"){
-			this.handleBackspace(event);
+			this.contentCaret.handleBackspace(event);
 		}
 		else if (!specialKeys.includes(event.key)){
 			this.contentCaret.handleKey(event);
@@ -56,9 +56,5 @@ class Caret {
 
 	handleEnter(event){
 		return this.contentCaret.handleEnter(event);
-	}
-
-	handleBackspace(event){
-		
 	}
 }
