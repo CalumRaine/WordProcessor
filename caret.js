@@ -14,17 +14,35 @@ class Caret {
 		document.addEventListener("keydown", (event) => this.handleKey(event));
 	}
 
+	render(){
+		// Just for debugging
+		globalCanvasContext.clearRect(0, 0, 1000, 1000);
+		let x = 20;
+		let y = 20;
+		let characters = this.contentCaret.Characters;
+		for (let character of characters){
+			globalCanvasContext.font = character == this.contentCaret.character ? "bold 20px sans-serif" : "20px sans-serif";
+			globalCanvasContext.fillText(character.character, x, y);
+			x += character.Width;
+		}
+		document.querySelector("input").value = this.contentCaret.WordCount;
+	}
+
 	handleKey(event){
 		const specialKeys = ["Ctrl", "Alt", "Shift", "Meta"];
 		if (event.key.includes("Arrow")){
-			return this.handleArrow(event);
+			this.handleArrow(event);
 		}
 		else if (event.key == "Enter"){
-			return this.handleEnter(event);
+			this.handleEnter(event);
+		}
+		else if (event.key == "Backspace"){
+			this.handleBackspace(event);
 		}
 		else if (!specialKeys.includes(event.key)){
-			return this.contentCaret.handleKey(event);
+			this.contentCaret.handleKey(event);
 		}
+		this.render();
 	}
 
 	handleArrow(event){
@@ -38,5 +56,9 @@ class Caret {
 
 	handleEnter(event){
 		return this.contentCaret.handleEnter(event);
+	}
+
+	handleBackspace(event){
+		
 	}
 }
