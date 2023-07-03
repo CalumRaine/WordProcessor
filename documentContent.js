@@ -40,6 +40,25 @@ class Content {
 		return index == 0 ? false : this.pages[index - 1].grabCaret(caret, true);
 	}
 
+	backspace(caret, event){
+		let index = this.getCaretIndex(caret);
+		let page = this.pages[index];
+		console.log(index);
+		if (page.backspace(caret, event)){
+			return true;
+		}
+		else if (!page.Empty){
+			return index > 0 ? this.pages[index-1].grabCaret(caret, true) : false;
+		}
+		else if (pages.length > 1) {
+			this.pages.splice(index, 1);
+			return index > 0 ? this.pages[index-1].grabCaret(caret, true) : this.pages[index].grabCaret(caret, false);
+		}
+		else {
+			return false;
+		}
+	}
+
 	right(caret){
 		let index = this.getCaretIndex(caret);
 		return index == this.LastIndex ? false : this.pages[index + 1].grabCaret(caret, false);

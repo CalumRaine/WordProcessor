@@ -25,6 +25,10 @@ class Line {
 		return this.words.length - 1;
 	}
 
+	get Empty(){
+		return this.words.length == 0;
+	}
+
 	insertCharacter(caret, newCharacter){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
@@ -50,6 +54,34 @@ class Line {
 	right(caret){
 		let index = this.getCaretIndex(caret);
 		return index == this.LastIndex ? false : this.words[index+1].grabCaret(caret, false);
+	}
+
+	backspace(caret, event){
+		let index = this.getCaretIndex(caret);
+		let word = this.words[index];
+		if (!event.isCtrl && word.backspaceCharacter(caret) || event.isCtrl && word.backspaceWord(caret)){
+			return true;
+		}
+		else if (!word.Empty){
+			// Caret at start of word.  Transfer to prior word.
+			return index == 0 ? false : this.words[index-1].grabCaret(caret, true);
+		}
+		else if (index > 0){
+			// Word is empty.  Combine surrounding words.
+			let previous = this.words[index-1];
+			previous.grabCaret(caret, true);
+			if (index != this.LastIndex){
+				let next = this.words[index+1];
+				word.appendCharacters(next.characters);
+				this.words.splice(index, 1);
+			}
+			this.words.splice(index, 1);
+			return true;
+		}
+		else {
+			// Caret must be passed to previous line
+			return false;
+		}
 	}
 
 	grabCaret(caret, toEnd){

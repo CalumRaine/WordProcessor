@@ -18,6 +18,10 @@ class Page {
 		return this.lines.map(l => l.Text).join("");
 	}
 
+	get Empty(){
+		return this.lines.length == 0;
+	}
+
 	get WordCount(){
 		return this.lines.reduce((sum, line) => sum + line.WordCount, 0);
 	}
@@ -33,6 +37,21 @@ class Page {
 
 	getCaretIndex(caret){
 		return this.lines.findIndex(l => l == caret.line);
+	}
+
+	backspace(caret, event){
+		let index = this.getCaretIndex(caret);
+		let line = this.lines[index];
+		if (line.backspace(caret, event)){
+			return true;
+		}
+		else if (line.Empty){
+			this.lines.splice(index, 1);
+			return this.Empty ? false : this.lines[index-1].grabCaret(caret, true);
+		}
+		else {
+			return index == 0 ? false : this.lines[index-1].grabCaret(caret, true);
+		}
 	}
 
 	left(caret){

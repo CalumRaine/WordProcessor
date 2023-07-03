@@ -35,6 +35,10 @@ class ContentCaret {
 		return event.isCtrl ? this.content.pageBreak(this) : this.page.lineBreak(this);
 	}
 
+	handleBackspace(event){
+		return this.content.backspace(this, event);
+	}
+
 	left(){
 		if (this.word.left(this) || this.line.left(this) || this.page.left(this)){
 			return true;
