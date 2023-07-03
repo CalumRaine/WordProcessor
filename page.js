@@ -10,6 +10,10 @@ class Page {
 		return line;
 	}
 
+	get Characters(){
+		return this.lines.flatMap(l => l.Characters);
+	}
+
 	get Text(){
 		return this.lines.map(l => l.Text).join("");
 	}
