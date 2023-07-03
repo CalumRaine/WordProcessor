@@ -29,7 +29,7 @@ class Caret {
 	}
 
 	handleKey(event){
-		const specialKeys = ["Ctrl", "Alt", "Shift", "Meta"];
+		const specialKeys = ["Control", "Alt", "Shift", "Meta"];
 		if (event.key.includes("Arrow")){
 			this.handleArrow(event);
 		}

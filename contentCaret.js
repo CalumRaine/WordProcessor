@@ -32,7 +32,7 @@ class ContentCaret {
 	}
 
 	handleEnter(event){
-		return event.isCtrl ? this.content.pageBreak(this) : this.page.lineBreak(this);
+		return event.ctrlKey ? this.content.pageBreak(this) : this.page.lineBreak(this);
 	}
 
 	handleBackspace(event){

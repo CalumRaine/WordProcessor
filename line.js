@@ -59,7 +59,7 @@ class Line {
 	backspace(caret, event){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		if (!event.isCtrl && word.backspaceCharacter(caret) || event.isCtrl && word.backspaceWord(caret)){
+		if (!event.ctrlKey && word.backspaceCharacter(caret) || event.ctrlKey && word.backspaceWord(caret)){
 			return true;
 		}
 		else if (!word.Empty){
