@@ -16,7 +16,10 @@
 	<input type="number"/>
 	<script>
 		var canvas = document.querySelector("canvas");
+		canvas.width = 1000;
+		canvas.height = 500;
 		var globalCanvasContext = canvas.getContext("2d");
+		globalCanvasContext.font = "20px sans-serif";
 		var caret = new Caret();
 		
 	</script>
