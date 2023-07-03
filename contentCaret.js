@@ -10,11 +10,21 @@ class ContentCaret {
 		this.content.grabCaret(this, false);
 	}
 
+	get Characters(){
+		return this.content.Characters;
+	}
+
+	get Text(){
+		return this.content.Text;
+	}
+
+	get WordCount(){
+		return this.content.WordCount;
+	}
+
 	handleKey(event){
 		let character = new Character(event.key);
-		this.line.insert(this, character);
-		document.querySelector("p").innerHTML = this.content.Text;
-		document.querySelector("input").value = this.content.WordCount;
+		this.line.insertCharacter(this, character);
 	}
 
 	handleArrow(event){
