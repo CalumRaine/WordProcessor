@@ -64,7 +64,8 @@ class Word {
 	}
 
 	appendCharacters(caret, newCharacters){
-		this.characters = Array.concat(this.characters, newCharacters);
+		this.characters = this.characters.concat(newCharacters);
+		return true;
 	}
 
 	getCaretIndex(caret){
@@ -83,7 +84,7 @@ class Word {
 		let index = this.getCaretIndex(caret);
 		let character = this.characters[index];
 		this.characters.splice(index, 1);
-		return index == 1 ? !this.Empty : this.characters[index-1].grabCaret(caret);
+		return index == 0 ? !this.Empty : this.characters[index-1].grabCaret(caret);
 	}
 
 	backspaceWord(caret){
