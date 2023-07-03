@@ -9,6 +9,10 @@ class Line {
 		this.words = words;
 	}
 
+	get Characters(){
+		return this.words.flatMap(w => w.characters);
+	}
+
 	get Text(){
 		return this.words.map(w => w.Text).join("");
 	}
@@ -21,43 +25,17 @@ class Line {
 		return this.words.length - 1;
 	}
 
-	insert(caret, newCharacter){
+	insertCharacter(caret, newCharacter){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		if (word.insert(caret, newCharacter)){
-			return true;
-		}
-		else if (word.caretAtEnd(caret)){
-			// prepend to start of next word
-			if (index == this.LastIndex){
-				let newWord = new Word([newCharacter]);
-				this.words.push(newWord);
-				newWord.grabCaret(caret, true);
-				return true;
-			}
-			else {
-				return this.words[index+1].insert(caret, newCharacter);
-			}
-		}
-		else if (word.caretAtStart(caret)){
-			// append to end of previous word
-			if (index == 0){
-				let newWord = new Word([newCharacter]);
-				this.words.splice(0, 0, newWord);
-				newWord.grabCaret(caret, true);
-				return true;
-			}
-			else {
-				return this.words[index-1].insert(caret, newCharacter);
-			}
-		}
-		else {
-			// Split word and insert character between
+		if (!word.insert(caret, newCharacter)){
+			// Character rejected: Cannot mix whitespace with characters.
+			// Split word and insert new between
 			this.wordBreak(caret);
-			this.words.splice(1, 0, newWord);
-			newWord.grabCaret(caret, true);
-			return true;
+			this.insertWordAfter(caret, new Word([newCharacter]), index);
 		}
+		
+		return true;
 	}
 
 	getCaretIndex(caret){
@@ -83,17 +61,27 @@ class Line {
 		this.wordBreak(caret);
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
-		let extractedWords = this.words.splice(index, toExtract);
-		let brokenLine = new Line();
-		brokenLine.adopt(extractedWords);
+		let extractedWords = this.words.splice(index + 1, toExtract);
+		let brokenLine = new Line(extractedWords);
 		return brokenLine;
 	}
 
 	wordBreak(caret){
 		let index = this.getCaretIndex(caret);
-		let brokenWord = this.words[index].split(caret);
-		this.words.splice(index, 0, brokenWord);
-		brokenWord.grabCaret(caret);
+		let word = this.words[index];
+		let newWord = word.split(caret);
+		return newWord.Empty ? true : this.insertWordAfter(caret, newWord, index);
+	}
+
+	insertWordAfter(caret, word, index){
+		this.words.splice(index + 1, 0, word);
+		word.grabCaret(caret, true);
+		return true;
+	}
+
+	insertWordBefore(caret, word, index){
+		this.words.splice(index, 0, word);
+		word.grabCaret(caret, true);
 		return true;
 	}
 }
