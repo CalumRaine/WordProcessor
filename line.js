@@ -1,12 +1,43 @@
 class Line {
 	words = [];
+	renderCursor = 0;
 
 	constructor(words){
 		this.words = words == null ? [new Word()] : words;
 	}
 
-	adopt(words){
-		this.words = words;
+	initRender(){
+		this.renderCursor = 0;
+		this.words.forEach(w => w.initRender());
+	}
+
+	get Rendered(){
+		this.renderCursor == this.words.length;
+	}
+
+	renderNext(maxWidth, maxHeight){
+		// Get the next set of wrapped words that can fit on a line
+		let wrappedWords = [];
+		for (let w = this.renderCursor; w < this.words.length; ++w){
+			let wordToRender = this.words[w];
+			do {
+				let wrappedCharacters = wordToRender.renderNext(maxWidth, maxHeight, wrappedWords.length == 0);
+				if (wrappedCharacters == null){
+					// Line must wrap.  No more characters can fit on line.
+					return wrappedWords.length == 0 ? null : wrappedWords;
+				}
+				else {
+					let wrappedWord = new WrappedWord(wrappedCharacters);
+					maxWidth -= wrappedWord.Width;
+					wrappedWords.push(wrappedWord);
+				}
+			} while (!wordToRender.Rendered);
+
+			// Word successfully rendered.  Safe to advance
+			++this.renderCursor;
+		}
+
+		return wrappedWords;
 	}
 
 	get Characters(){
