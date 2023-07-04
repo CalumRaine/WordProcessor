@@ -1,13 +1,45 @@
 class Page {
 	lines = [];
+	renderCursor = 0;
+	bodyWidth = 500;
+	bodyHeight = 700;
 
 	constructor(lines){
 		this.lines = lines == null ? [new Line()] : lines;
 	}
 
-	adopt(lines){
-		this.lines = lines;
-		return line;
+	initRender(){
+		this.renderCursor = 0;
+		this.lines.forEach(l => l.initRender());
+	}
+
+	get Rendered(){
+		return this.renderCursor == this.lines.length;
+	}
+
+	renderNext(maxWidth, maxHeight){
+		// Get the next set of wrapped lines that can fit on a page
+		let wrappedLines = [];
+		for (let l = this.renderCursor; l < this.lines.length; ++l){
+			let lineToRender = this.lines[l];
+			do {
+				let wrappedWords = lineToRender.renderNext(maxWidth, maxHeight);
+				if (wrappedWords == null){
+					// Page must wrap.  Line partially rendered but no more words can fit on page.
+					return wrappedLines;
+				}
+				else {
+					let wrappedLine = new WrappedLine(wrappedWords);
+					wrappedLines.push(wrappedLine);
+					maxHeight -= wrappedLine.Height;
+				}
+			} while (!lineToRender.Rendered);
+			
+			// Line successfully rendered.  Safe to advance.
+			++this.renderCursor;
+		}
+
+		return wrappedWords;
 	}
 
 	get Characters(){
@@ -69,8 +101,7 @@ class Page {
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
 		let extractedLines = this.lines.splice(index, toExtract);
-		let newPage = new Page();
-		newPage.adopt(extractedLines);
+		let newPage = new Page(extractedLines);
 		return newPage;
 	}
 
