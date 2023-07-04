@@ -5,11 +5,6 @@ class Content {
 		this.pages = pages == null ? [new Page()] : pages;
 	}
 
-	adopt(pages){
-		this.pages = pages;
-		return true;
-	}
-
 	get Characters(){
 		return this.pages.flatMap(p => p.Characters);
 	}
