@@ -126,6 +126,10 @@ class WrappedWord {
 		return Math.max(...this.wrappedCharacters.map(c => c.Ascent));
 	}
 
+	get Empty(){
+		return this.wrappedCharacters[0].Empty;
+	}
+
 	render(x, y){
 		for (let wrappedCharacter of this.wrappedCharacters){
 			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
