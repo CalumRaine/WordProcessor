@@ -52,32 +52,37 @@ class WrappedPage {
 
 	render(x, y){
 		// draw page
-		globalCanvasContext.strokeStyle = "black";
-		globalCanvasContext.beginPath();
-		globalCanvasContext.rect(x, y, this.Width, this.Height);
-		globalCanvasContext.stroke();
+		this.debugRect(x, y, this.Width, this.Height, "black");
 
 		// draw body
 		x += this.hMargin;
 		y += this.vMargin;
-		globalCanvasContext.strokeStyle = "gray";
-		globalCanvasContext.beginPath();
-		globalCanvasContext.rect(x, y, this.bodyWidth, this.bodyHeight);
-		globalCanvasContext.stroke();
+		this.debugRect(x, y, this.bodyWidth, this.bodyHeight, "gray");
 
 		for (let wrappedLine of this.wrappedLines){
 			y += wrappedLine.Ascent;
-			globalCanvasContext.beginPath();
-			globalCanvasContext.moveTo(x, y);
-			globalCanvasContext.lineTo(x + wrappedLine.Width, y);
-			globalCanvasContext.stroke();
+			this.debugLine(x, y, wrappedLine.Width, "gray");
 			wrappedLine.render(x, y);
 			y += this.lineGap;
-			globalCanvasContext.beginPath();
-			globalCanvasContext.moveTo(x, y);
-			globalCanvasContext.lineTo(x + wrappedLine.Width, y);
-			globalCanvasContext.stroke();
+			this.debugLine(x, y, wrappedLine.Width, "gray");
 		}
+		return true;
+	}
+
+	debugRect(x, y, width, height, color){
+		globalCanvasContext.strokeStyle = color;
+		globalCanvasContext.beginPath();
+		globalCanvasContext.rect(x, y, width, height);
+		globalCanvasContext.stroke();
+		return true;
+	}
+
+	debugLine(x, y, width, color){
+		globalCanvasContext.strokeStyle = color;
+		globalCanvasContext.beginPath();
+		globalCanvasContext.moveTo(x, y);
+		globalCanvasContext.lineTo(x + width, y);
+		globalCanvasContext.stroke();
 		return true;
 	}
 }
