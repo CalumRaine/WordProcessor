@@ -19,8 +19,8 @@ class Display {
 	}
 
 	render(){
-		let x = 0;
-		let y = 0;
+		let x = 20;
+		let y = 20;
 		for (let wrappedPage of this.wrappedPages){
 			wrappedPage.render(x, y);
 			y += wrappedPage.Height;
@@ -43,15 +43,16 @@ class WrappedPage {
 	}
 
 	get Height(){
-		return this.bodyHeight + this.hMargin + this.hMargin;
+		return this.bodyHeight + this.vMargin + this.vMargin;
 	}
 
 	get Width(){
-		return this.bodyWidth + this.vMargin + this.vMargin;
+		return this.bodyWidth + this.hMargin + this.hMargin;
 	}
 
 	render(x, y){
 		// draw page
+		globalCanvasContext.strokeStyle = "black";
 		globalCanvasContext.beginPath();
 		globalCanvasContext.rect(x, y, this.Width, this.Height);
 		globalCanvasContext.stroke();
@@ -59,14 +60,23 @@ class WrappedPage {
 		// draw body
 		x += this.hMargin;
 		y += this.vMargin;
+		globalCanvasContext.strokeStyle = "gray";
 		globalCanvasContext.beginPath();
 		globalCanvasContext.rect(x, y, this.bodyWidth, this.bodyHeight);
 		globalCanvasContext.stroke();
 
 		for (let wrappedLine of this.wrappedLines){
 			y += wrappedLine.Ascent;
+			globalCanvasContext.beginPath();
+			globalCanvasContext.moveTo(x, y);
+			globalCanvasContext.lineTo(x + wrappedLine.Width, y);
+			globalCanvasContext.stroke();
 			wrappedLine.render(x, y);
 			y += this.lineGap;
+			globalCanvasContext.beginPath();
+			globalCanvasContext.moveTo(x, y);
+			globalCanvasContext.lineTo(x + wrappedLine.Width, y);
+			globalCanvasContext.stroke();
 		}
 		return true;
 	}
