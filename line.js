@@ -103,7 +103,7 @@ class Line {
 			previous.grabCaret(caret, true);
 			if (index != this.LastIndex){
 				let next = this.words[index+1];
-				word.appendCharacters(next.characters);
+				previous.appendCharacters(caret, next.characters);
 				this.words.splice(index, 1);
 			}
 			this.words.splice(index, 1);
