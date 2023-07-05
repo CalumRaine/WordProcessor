@@ -5,6 +5,10 @@ class Content {
 		this.pages = pages == null ? [new Page()] : pages;
 	}
 
+	get Pages(){
+		return this.pages;
+	}
+
 	get Characters(){
 		return this.pages.flatMap(p => p.Characters);
 	}

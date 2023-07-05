@@ -10,6 +10,10 @@ class ContentCaret {
 		this.content.grabCaret(this, false);
 	}
 
+	get Pages(){
+		return this.content.Pages;
+	}
+
 	get Characters(){
 		return this.content.Characters;
 	}
