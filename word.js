@@ -3,7 +3,7 @@ class Word {
 	parseCursor = 0;
 
 	constructor(characters){
-		this.characters = characters == null ? [] : characters;
+		this.characters = characters == null ? [new Character()] : characters;
 	}
 
 	initParse(){
@@ -51,7 +51,7 @@ class Word {
 	}
 
 	get Empty(){
-		return this.characters.length == 0;
+		return this.characters[0].Empty;
 	}
 
 	get Text(){
@@ -76,7 +76,7 @@ class Word {
 
 	insert(caret, newCharacter){
 		if (this.Empty){
-			this.characters.push(newCharacter);
+			this.characters[0] = newCharacter;
 			newCharacter.grabCaret(caret);
 			return true;
 		}
@@ -147,14 +147,14 @@ class Word {
 
 	grabCaret(caret, toEnd){
 		caret.word = this;
-		return this.Empty ? true : this.characters[toEnd ? this.LastIndex : 0].grabCaret(caret);
+		return this.characters[toEnd ? this.LastIndex : 0].grabCaret(caret);
 	}
 
 	split(caret){
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
 		let extractedCharacters = this.characters.splice(index + 1, toExtract);
-		let brokenWord = new Word(extractedCharacters);
+		let brokenWord = new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
 		return brokenWord;
 	}
 }
