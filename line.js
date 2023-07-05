@@ -26,7 +26,7 @@ class Line {
 					// Line must wrap.  No more characters can fit on line.
 					return wrappedWords.length == 0 ? null : wrappedWords;
 				}
-				else {
+				else if (wrappedWords.length > 0 || wordToParse.IsTrueWord) {	// Don't start a line with whitespace
 					let wrappedWord = new WrappedWord(wrappedCharacters);
 					maxWidth -= wrappedWord.Width;
 					wrappedWords.push(wrappedWord);
