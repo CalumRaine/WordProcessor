@@ -17,6 +17,15 @@ class Page {
 		return this.parseCursor == this.lines.length;
 	}
 
+	get Lines(){
+		return this.lines;
+	}
+
+	appendLines(newLines){
+		this.lines.concat(newLines);
+		return true;
+	}
+
 	parseNext(){
 		// Get the next set of wrapped lines that can fit on a page
 		let maxWidth = this.bodyWidth;
@@ -83,8 +92,15 @@ class Page {
 			this.lines.splice(index, 1);
 			return this.Empty ? false : this.lines[index-1].grabCaret(caret, true);
 		}
+		else if (index > 0){
+			let previousLine = this.lines[index-1];
+			previousLine.grabCaret(caret, true);
+			previousLine.appendWords(line.Words);
+			this.lines.splice(index, 1);
+			return true;
+		}
 		else {
-			return index == 0 ? false : this.lines[index-1].grabCaret(caret, true);
+			return false;
 		}
 	}
 

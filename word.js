@@ -14,6 +14,10 @@ class Word {
 		return this.parseCursor == this.characters.length;
 	}
 
+	get Characters(){
+		return this.characters;
+	}
+
 	parseNext(maxWidth, maxHeight, forceBreak){
 		// Get the next set of characters that can fit on a line
 		if (this.Width <= maxWidth){
@@ -51,7 +55,7 @@ class Word {
 	}
 
 	get Empty(){
-		return this.characters[0].Empty;
+		return this.characters.length == 0 || this.characters[0].Empty;
 	}
 
 	get Text(){
@@ -124,7 +128,12 @@ class Word {
 	backspaceCharacter(caret){
 		let index = this.getCaretIndex(caret);
 		let character = this.characters[index];
-		this.characters.splice(index, 1);
+		if (index == 0 && this.characters.length == 1){
+			character.character = Character.EMPTY;
+		}
+		else {
+			this.characters.splice(index, 1);
+		}
 		return index == 0 ? false : this.characters[index-1].grabCaret(caret);
 	}
 

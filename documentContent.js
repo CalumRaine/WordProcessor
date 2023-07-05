@@ -45,15 +45,19 @@ class Content {
 		if (page.backspace(caret, event)){
 			return true;
 		}
-		else if (!page.Empty){
-			return index > 0 ? this.pages[index-1].grabCaret(caret, true) : false;
+		else if (index == 0){
+			return false;
 		}
-		else if (pages.length > 1) {
+		else if (page.Empty){
 			this.pages.splice(index, 1);
-			return index > 0 ? this.pages[index-1].grabCaret(caret, true) : this.pages[index].grabCaret(caret, false);
+			return this.pages[index-1].grabCaret(caret, true);
 		}
 		else {
-			return false;
+			let previousPage = this.pages[index-1];
+			previousPage.grabCaret(caret, true);
+			previousPage.appendLines(page.Lines);
+			this.pages.splice(index, 1);
+			return true;
 		}
 	}
 

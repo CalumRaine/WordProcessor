@@ -15,6 +15,15 @@ class Line {
 		return this.parseCursor == this.words.length;
 	}
 
+	get Words(){
+		return this.words;
+	}
+
+	appendWords(newWords){
+		this.words.concat(newWords);
+		return true;
+	}
+
 	parseNext(maxWidth, maxHeight){
 		// Get the next set of wrapped words that can fit on a line
 		let wrappedWords = [];
@@ -41,7 +50,7 @@ class Line {
 	}
 
 	get Characters(){
-		return this.words.flatMap(w => w.characters);
+		return this.words.flatMap(w => w.Characters);
 	}
 
 	get Text(){
@@ -103,7 +112,7 @@ class Line {
 			previous.grabCaret(caret, true);
 			if (index != this.LastIndex){
 				let next = this.words[index+1];
-				previous.appendCharacters(caret, next.characters);
+				previous.appendCharacters(caret, next.Characters);
 				this.words.splice(index, 1);
 			}
 			this.words.splice(index, 1);
