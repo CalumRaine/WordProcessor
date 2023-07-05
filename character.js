@@ -13,7 +13,7 @@ class Character {
 	}
 
 	get Ascent(){
-		this.dimensions.actualBoundingBoxAscent;
+		return this.dimensions.actualBoundingBoxAscent;
 	}
 
 	grabCaret(caret){
