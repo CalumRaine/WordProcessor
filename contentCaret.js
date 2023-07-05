@@ -27,6 +27,7 @@ class ContentCaret {
 	}
 
 	handleKey(event){
+		event.preventDefault();
 		let character = new Character(event.key);
 		this.line.insertCharacter(this, character);
 	}
