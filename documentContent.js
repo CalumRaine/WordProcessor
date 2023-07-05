@@ -38,7 +38,6 @@ class Content {
 	backspace(caret, event){
 		let index = this.getCaretIndex(caret);
 		let page = this.pages[index];
-		console.log(index);
 		if (page.backspace(caret, event)){
 			return true;
 		}
