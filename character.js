@@ -1,10 +1,11 @@
 class Character {
+	static EMPTY = "";
 	character = "";
 	dimensions = null;
 	caret = null;
 	
 	constructor(character){
-		this.character = character;
+		this.character = character == null ? Character.EMPTY : character;
 		this.dimensions = globalCanvasContext.measureText(character);
 	}
 
@@ -14,6 +15,10 @@ class Character {
 
 	get Ascent(){
 		return this.dimensions.actualBoundingBoxAscent;
+	}
+
+	get Empty(){
+		return this.character == Character.EMPTY;
 	}
 
 	grabCaret(caret){
