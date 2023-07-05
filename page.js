@@ -1,6 +1,6 @@
 class Page {
 	lines = [];
-	renderCursor = 0;
+	parseCursor = 0;
 	bodyWidth = 500;
 	bodyHeight = 700;
 
@@ -8,38 +8,40 @@ class Page {
 		this.lines = lines == null ? [new Line()] : lines;
 	}
 
-	initRender(){
-		this.renderCursor = 0;
-		this.lines.forEach(l => l.initRender());
+	initParse(){
+		this.parseCursor = 0;
+		this.lines.forEach(l => l.initParse());
 	}
 
-	get Rendered(){
-		return this.renderCursor == this.lines.length;
+	get Parsed(){
+		return this.parseCursor == this.lines.length;
 	}
 
-	renderNext(maxWidth, maxHeight){
+	parseNext(){
 		// Get the next set of wrapped lines that can fit on a page
+		let maxWidth = this.bodyWidth;
+		let maxHeight = this.bodyHeight;
 		let wrappedLines = [];
-		for (let l = this.renderCursor; l < this.lines.length; ++l){
-			let lineToRender = this.lines[l];
+		for (let l = this.parseCursor; l < this.lines.length; ++l){
+			let lineToParse = this.lines[l];
 			do {
-				let wrappedWords = lineToRender.renderNext(maxWidth, maxHeight);
+				let wrappedWords = lineToParse.parseNext(maxWidth, maxHeight);
 				if (wrappedWords == null){
 					// Page must wrap.  Line partially rendered but no more words can fit on page.
-					return wrappedLines;
+					return wrappedLines.length == 0 ? null : wrappedLines;
 				}
 				else {
 					let wrappedLine = new WrappedLine(wrappedWords);
 					wrappedLines.push(wrappedLine);
-					maxHeight -= wrappedLine.Height;
+					maxHeight -= wrappedLine.Ascent;
 				}
-			} while (!lineToRender.Rendered);
+			} while (!lineToParse.Parsed);
 			
 			// Line successfully rendered.  Safe to advance.
-			++this.renderCursor;
+			++this.parseCursor;
 		}
 
-		return wrappedWords;
+		return wrappedLines;
 	}
 
 	get Characters(){

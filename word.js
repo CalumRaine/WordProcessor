@@ -1,32 +1,33 @@
 class Word {
 	characters = [];
-	renderCursor = 0;
+	parseCursor = 0;
 
 	constructor(characters){
 		this.characters = characters == null ? [] : characters;
 	}
 
-	initRender(){
-		this.renderCursor = 0;
+	initParse(){
+		this.parseCursor = 0;
 	}
 
-	get Rendered(){
-		return this.renderCursor == this.characters.length;
+	get Parsed(){
+		return this.parseCursor == this.characters.length;
 	}
 
-	renderNext(maxWidth, maxHeight, forceBreak){
+	parseNext(maxWidth, maxHeight, forceBreak){
 		// Get the next set of characters that can fit on a line
 		if (this.Width <= maxWidth){
 			// Word fits on page
+			this.parseCursor = this.characters.length;
 			return this.characters;
 		}
-		else if (this.Height > maxHeight){
+		else if (this.Ascent > maxHeight){
 			// This word won't fit on the page
 			return null;
 		}
 		else if (forceBreak){
 			// Word forced to split to fit on line
-			return this.forceRenderNext(maxWidth, maxHeight
+			return this.forceRenderNext(maxWidth, maxHeight);
 		}
 		else {
 			// Line must break to fit this word
@@ -37,14 +38,14 @@ class Word {
 	forceRenderNext(maxWidth, maxHeight){
 		// Word can be forced to break if it is longer than line length
 		let wrappedCharacters = [];
-		for (let c = this.renderCursor; c < this.characters.length; ++c){
+		for (let c = this.parseCursor; c < this.characters.length; ++c){
 			let wrappedCharacter = this.characters[c];
-			if (wrappedCharacter.Height > maxHeight || wrappedCharacter.Width > maxWidth){
+			if (wrappedCharacter.Ascent > maxHeight || wrappedCharacter.Width > maxWidth){
 				return wrappedCharacters.length == 0 ? null : wrappedCharacters;
 			}
 			wrappedCharacters.push(wrappedCharacter);
 			maxWidth -= wrappedCharacter.Width;
-			++this.renderCursor;
+			++this.parseCursor;
 		}
 		return wrappedCharacters;
 	}
@@ -62,7 +63,7 @@ class Word {
 	}
 
 	get Width(){
-		return this.characters.reduce((sum, value) => sum + value, 0);
+		return this.characters.reduce((sum, value) => sum + value.Width, 0);
 	}
 
 	get Ascent(){

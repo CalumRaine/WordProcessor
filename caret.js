@@ -26,6 +26,8 @@ class Caret {
 			x += character.Width;
 		}
 		document.querySelector("input").value = this.contentCaret.WordCount;
+
+		display.parse(this.contentCaret.Pages);
 	}
 
 	handleKey(event){

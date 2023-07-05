@@ -5,15 +5,15 @@ class Display {
 
 	}
 
-	render(contentPages){
+	parse(contentPages){
 		this.wrappedPages = [];
 		for (let contentPage of contentPages){
-			contentPage.initRender():
+			contentPage.initParse();
 			do {
-				let wrappedLines = contentPage.renderNext();
+				let wrappedLines = contentPage.parseNext();
 				let wrappedPage = new WrappedPage(wrappedLines);
 				this.wrappedPages.push(wrappedPage);
-			} while (!contentPage.Rendered);
+			} while (!contentPage.Parsed);
 		}
 	}
 }
@@ -36,6 +36,10 @@ class WrappedLine {
 	get Width(){
 		return this.wrappedWords.reduce((sum, word) => sum + word.Width, 0);
 	}
+
+	get Ascent(){
+		return Math.max(...this.wrappedWords.map(w => w.Ascent));
+	}
 }
 
 class WrappedWord {
@@ -47,5 +51,9 @@ class WrappedWord {
 
 	get Width(){
 		return this.wrappedCharacters.reduce((sum, character) => sum + character.Width, 0);
+	}
+
+	get Ascent(){
+		return Math.max(...this.wrappedCharacters.map(c => c.Ascent));
 	}
 }
