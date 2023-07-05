@@ -110,7 +110,7 @@ class Page {
 	lineBreak(caret){
 		let index = this.getCaretIndex(caret);
 		let brokenLine = this.lines[index].split(caret);
-		this.lines.splice(index, 0, brokenLine);
+		this.lines.splice(index + 1, 0, brokenLine);
 		brokenLine.grabCaret(caret, false);
 		return true;
 	}

@@ -121,11 +121,11 @@ class Line {
 	}
 
 	split(caret){
-		this.wordBreak(caret);
 		let index = this.getCaretIndex(caret);
+		this.wordBreak(caret);
 		let toExtract = this.LastIndex - index;
 		let extractedWords = this.words.splice(index + 1, toExtract);
-		let brokenLine = new Line(extractedWords);
+		let brokenLine = new Line(extractedWords.length == 0 ? null : extractedWords);
 		return brokenLine;
 	}
 
