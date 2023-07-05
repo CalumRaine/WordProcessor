@@ -1,5 +1,6 @@
 class Display {
 	wrappedPages = [];
+	pageGap = 20;
 	
 	constructor(){
 
@@ -16,13 +17,44 @@ class Display {
 			} while (!contentPage.Parsed);
 		}
 	}
+
+	render(){
+		let x = 0;
+		let y = 0;
+		for (let wrappedPage of this.wrappedPages){
+			wrappedPage.render(x, y);
+			y += wrappedPage.Height;
+			y += this.pageGap;
+		}
+		return true;
+	}
 }
 
 class WrappedPage {
 	wrappedLines = [];
+	lineGap = 5;
+	bodyWidth = 500;
+	bodyHeight = 700;
+	vMargin = 50;
+	hMargin = 70;
 
 	constructor(wrappedLines){
 		this.wrappedLines = wrappedLines;
+	}
+
+	get Height(){
+		return this.bodyHeight + this.hMargin + this.hMargin;
+	}
+
+	render(x, y){
+		x += this.hMargin;
+		y += this.vMargin;
+		for (let wrappedLine of this.wrappedLines){
+			wrappedLine.render(x, y);
+			y += wrappedLine.Ascent;
+			y += this.lineGap;
+		}
+		return true;
 	}
 }
 
@@ -40,6 +72,14 @@ class WrappedLine {
 	get Ascent(){
 		return Math.max(...this.wrappedWords.map(w => w.Ascent));
 	}
+
+	render(x, y){
+		for (let wrappedWord of this.wrappedWords){
+			wrappedWord.render(x, y);
+			x += wrappedWord.Width;
+		}
+		return true;
+	}
 }
 
 class WrappedWord {
@@ -55,5 +95,13 @@ class WrappedWord {
 
 	get Ascent(){
 		return Math.max(...this.wrappedCharacters.map(c => c.Ascent));
+	}
+
+	render(x, y){
+		for (let wrappedCharacter of this.wrappedCharacters){
+			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
+			x += wrappedCharacter.Width;
+		}
+		return true;
 	}
 }

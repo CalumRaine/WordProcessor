@@ -15,19 +15,9 @@ class Caret {
 	}
 
 	render(){
-		// Just for debugging
 		globalCanvasContext.clearRect(0, 0, 1000, 1000);
-		let x = 20;
-		let y = 20;
-		let characters = this.contentCaret.Characters;
-		for (let character of characters){
-			globalCanvasContext.font = character == this.contentCaret.character ? "bold 20px sans-serif" : "20px sans-serif";
-			globalCanvasContext.fillText(character.character, x, y);
-			x += character.Width;
-		}
-		document.querySelector("input").value = this.contentCaret.WordCount;
-
 		display.parse(this.contentCaret.Pages);
+		display.render();
 	}
 
 	handleKey(event){
