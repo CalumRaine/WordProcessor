@@ -46,12 +46,26 @@ class WrappedPage {
 		return this.bodyHeight + this.hMargin + this.hMargin;
 	}
 
+	get Width(){
+		return this.bodyWidth + this.vMargin + this.vMargin;
+	}
+
 	render(x, y){
+		// draw page
+		globalCanvasContext.beginPath();
+		globalCanvasContext.rect(x, y, this.Width, this.Height);
+		globalCanvasContext.stroke();
+
+		// draw body
 		x += this.hMargin;
 		y += this.vMargin;
+		globalCanvasContext.beginPath();
+		globalCanvasContext.rect(x, y, this.bodyWidth, this.bodyHeight);
+		globalCanvasContext.stroke();
+
 		for (let wrappedLine of this.wrappedLines){
-			wrappedLine.render(x, y);
 			y += wrappedLine.Ascent;
+			wrappedLine.render(x, y);
 			y += this.lineGap;
 		}
 		return true;
