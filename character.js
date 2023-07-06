@@ -1,12 +1,12 @@
 class Character {
-	static EMPTY = "";
+	static DUMMY = "";
 	character = "";
 	dimensions = null;
 	caret = null;
 	
 	constructor(character){
-		this.character = character == null ? Character.EMPTY : character;
-		this.dimensions = globalCanvasContext.measureText(character);
+		this.character = character == null ? Character.DUMMY : character;
+		this.dimensions = globalCanvasContext.measureText(this.character);
 	}
 
 	get Width(){
@@ -18,10 +18,20 @@ class Character {
 	}
 
 	get Empty(){
-		return this.character == Character.EMPTY;
+		return this.character == Character.DUMMY;
 	}
 
-	grabCaret(caret){
+	get Text(){
+		return this.character;
+	}
+
+	Replace(newCharacter){
+		this.character = newCharacter.character;
+		this.dimensions = globalCanvasContext.measureText(this.character);
+		return true;
+	}
+
+	GrabCaret(caret){
 		caret.character = this;
 		return true;
 	}

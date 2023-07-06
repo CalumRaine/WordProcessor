@@ -6,23 +6,23 @@ class Display {
 
 	}
 
-	parse(contentPages){
+	Parse(contentPages){
 		this.wrappedPages = [];
 		for (let contentPage of contentPages){
-			contentPage.initParse();
+			contentPage.InitParse();
 			do {
-				let wrappedLines = contentPage.parseNext();
+				let wrappedLines = contentPage.ParseNext();
 				let wrappedPage = new WrappedPage(wrappedLines);
 				this.wrappedPages.push(wrappedPage);
 			} while (!contentPage.Parsed);
 		}
 	}
 
-	render(){
+	Render(){
 		let x = 20;
 		let y = 20;
 		for (let wrappedPage of this.wrappedPages){
-			wrappedPage.render(x, y);
+			wrappedPage.Render(x, y);
 			y += wrappedPage.Height;
 			y += this.pageGap;
 		}
@@ -50,7 +50,7 @@ class WrappedPage {
 		return this.bodyWidth + this.hMargin + this.hMargin;
 	}
 
-	render(x, y){
+	Render(x, y){
 		// draw page
 		this.debugRect(x, y, this.Width, this.Height, "black");
 
@@ -62,7 +62,7 @@ class WrappedPage {
 		for (let wrappedLine of this.wrappedLines){
 			y += wrappedLine.Ascent;
 			this.debugLine(x, y, wrappedLine.Width, "gray");
-			wrappedLine.render(x, y);
+			wrappedLine.Render(x, y);
 			y += this.lineGap;
 			this.debugLine(x, y, wrappedLine.Width, "gray");
 		}
@@ -102,9 +102,9 @@ class WrappedLine {
 		return Math.max(...this.wrappedWords.map(w => w.Ascent));
 	}
 
-	render(x, y){
+	Render(x, y){
 		for (let wrappedWord of this.wrappedWords){
-			wrappedWord.render(x, y);
+			wrappedWord.Render(x, y);
 			x += wrappedWord.Width;
 		}
 		return true;
@@ -130,7 +130,7 @@ class WrappedWord {
 		return this.wrappedCharacters[0].Empty;
 	}
 
-	render(x, y){
+	Render(x, y){
 		for (let wrappedCharacter of this.wrappedCharacters){
 			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
 			x += wrappedCharacter.Width;

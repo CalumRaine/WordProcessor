@@ -1,12 +1,5 @@
-/*
-	You have to separate document content responsibilities from document display responsibilities.
-	The document caret interfaces between both.  
-		-- User presses left arrow?  Means move caret left in document buffer.
-		-- User presses up arrow?  Means move caret upward in document display.
-	A new line in the document content forces a new line.  But the display can also wrap lines as it needs to.
- */ 
-
 class Caret {
+	static START = -1;
 	contentCaret = new ContentCaret();
 	displayCaret = null; // not yet implemented
 	
@@ -16,8 +9,8 @@ class Caret {
 
 	render(){
 		globalCanvasContext.clearRect(0, 0, 1000, 1000);
-		display.parse(this.contentCaret.Pages);
-		display.render();
+		display.Parse(this.contentCaret.Pages);
+		display.Render();
 	}
 
 	handleKey(event){
@@ -29,17 +22,17 @@ class Caret {
 			this.handleEnter(event);
 		}
 		else if (event.key == "Backspace"){
-			this.contentCaret.handleBackspace(event);
+			this.contentCaret.HandleBackspace(event);
 		}
 		else if (!specialKeys.includes(event.key)){
-			this.contentCaret.handleKey(event);
+			this.contentCaret.HandleKey(event);
 		}
 		this.render();
 	}
 
 	handleArrow(event){
 		if (event.key.includes("Left") || event.key.includes("Right")){
-			return this.contentCaret.handleArrow(event);
+			return this.contentCaret.HandleArrow(event);
 		}
 		else {
 			return console.log(event.key, "Not yet handled");
@@ -47,6 +40,6 @@ class Caret {
 	}
 
 	handleEnter(event){
-		return this.contentCaret.handleEnter(event);
+		return this.contentCaret.HandleEnter(event);
 	}
 }

@@ -6,7 +6,11 @@ class Word {
 		this.characters = characters == null ? [new Character()] : characters;
 	}
 
-	initParse(){
+	get Empty(){
+		return this.characters.every(c => c.Empty);
+	}
+
+	InitParse(){
 		this.parseCursor = 0;
 	}
 
@@ -18,7 +22,93 @@ class Word {
 		return this.characters;
 	}
 
-	parseNext(maxWidth, maxHeight, forceBreak){
+	get Text(){
+		return this.characters.map(c => c.Text).join("");
+	}
+
+	get IsTrueWord(){
+		return this.characters.some(c => c.IsWordCharacter);
+	}
+
+	get Width(){
+		return this.characters.reduce((sum, character) => sum + character.Width, 0);
+	}
+
+	get Ascent(){
+		return Math.max(...this.characters.map(c => c.Ascent));
+	}
+
+	get LastIndex(){
+		return this.characters.length - 1;
+	}
+
+	GrabCaret(caret, toEnd){
+		caret.word = this;
+		return this.characters[toEnd ? this.LastIndex : 0].GrabCaret(caret);
+	}
+
+	InsertCharacter(caret, newCharacter){
+		if (this.Empty){
+			let character = this.characters[0];
+			character.Replace(newCharacter);
+			character.GrabCaret(caret);
+			return true;
+		}
+		else if (newCharacter.IsWordCharacter != this.IsTrueWord){
+			// Refuse to mix non-word characters with true word characters
+			return false;
+		}
+		else {
+			let index = this.getCaretIndex(caret);
+			this.characters.splice(index + 1, 0, newCharacter);
+			newCharacter.GrabCaret(caret);
+			return true;
+		}
+	}
+
+	BackspaceCharacter(caret){
+		// Return FALSE if now empty.  Parent will delete if there are other words in line.
+		// Return FALSE if caret now precedes word.  Parent will pass caret to prior word, or start of line.
+		let index = this.getCaretIndex(caret);
+		if (index == 0 && this.characters.length == 1){
+			// Don't leave yourself empty. 
+			// Replace with dummy character
+			// Parent Line will delete you if necessary.
+			this.characters[index].character = Character.DUMMY;
+			return false;
+		}
+
+		// Remove character
+		let character = this.characters[index];
+		this.characters.splice(index, 1);
+		if (index == 0){
+			// Caret now precedes word
+			// Inform Parent Line
+			caret.character = null;
+			return false;
+		}
+		else {
+			let previousCharacter = this.characters[index-1];
+			return previousCharacter.GrabCaret(caret);
+		}
+	}
+
+	BackspaceWord(caret){
+		let index = this.getCaretIndex(caret);
+		let toDelete = index + 1;
+		this.characters.splice(0, toDelete);
+		return false;
+	}
+
+	Split(caret){
+		let index = this.getCaretIndex(caret);
+		let toExtract = this.LastIndex - index;
+		let extractedCharacters = this.characters.splice(index + 1, toExtract);
+		let brokenWord = new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
+		return brokenWord;
+	}
+
+	ParseNext(maxWidth, maxHeight, forceBreak){
 		// Get the next set of characters that can fit on a line
 		if (this.Width <= maxWidth){
 			// Word fits on page
@@ -54,52 +144,26 @@ class Word {
 		return wrappedCharacters;
 	}
 
-	get Empty(){
-		return this.characters.length == 0 || this.characters[0].Empty;
+	getCaretIndex(caret){
+		return this.characters.findIndex(c => c == caret.character);
 	}
 
-	get Text(){
-		return this.characters.map(c => c.character).join("");
-	}
+	/* ------ */
 
-	get IsTrueWord(){
-		return this.characters.some(c => c.IsWordCharacter);
-	}
-
-	get Width(){
-		return this.characters.reduce((sum, value) => sum + value.Width, 0);
-	}
-
-	get Ascent(){
-		return Math.max(...this.characters.map(c => c.Ascent));
-	}
-
-	get LastIndex(){
-		return this.characters.length - 1;
-	}
-
-	insert(caret, newCharacter){
+	prepend(caret, newCharacter){
 		if (this.Empty){
 			this.characters[0] = newCharacter;
 			newCharacter.grabCaret(caret);
 			return true;
 		}
 		else if (newCharacter.IsWordCharacter != this.IsTrueWord){
-			// Refuse to mix non-word characters with true word characters
 			return false;
 		}
 		else {
-			let index = this.getCaretIndex(caret);
-			this.characters.splice(index + 1, 0, newCharacter);
-			newCharacter.grabCaret(caret);
+			this.characters.splice(0, 0, newCharacter);
+			this.grabCaret(caret, false);
 			return true;
 		}
-	}
-
-	prepend(caret, newCharacter){
-		this.characters.splice(0, 0, newCharacter);
-		this.grabCaret(caret, false);
-		return true;
 	}
 
 	append(caret, newCharacter){
@@ -113,10 +177,6 @@ class Word {
 		return true;
 	}
 
-	getCaretIndex(caret){
-		return this.characters.findIndex(c => c == caret.character);
-	}
-
 	caretAtStart(caret){
 		return this.getCaretIndex(caret) == 0;
 	}
@@ -125,28 +185,18 @@ class Word {
 		return this.getCaretIndex(caret) == this.LastIndex;
 	}
 
-	backspaceCharacter(caret){
-		let index = this.getCaretIndex(caret);
-		let character = this.characters[index];
-		if (index == 0 && this.characters.length == 1){
-			character.character = Character.EMPTY;
-		}
-		else {
-			this.characters.splice(index, 1);
-		}
-		return index == 0 ? false : this.characters[index-1].grabCaret(caret);
-	}
-
-	backspaceWord(caret){
-		let index = this.getCaretIndex(caret);
-		let toDelete = index + 1;
-		this.characters.splice(0, toDelete);
-		return this.Empty ? false : this.grabCaret(caret, false);
-	}
-
 	left(caret){
 		let index = this.getCaretIndex(caret);
-		return index <= 0 ? false : this.characters[index-1].grabCaret(caret);
+		if (index < 0){
+			return false;
+		}
+		else if (index == 0){
+			caret.character = null;
+			return true;
+		}
+		else {
+			return this.characters[index-1].grabCaret(caret);
+		}
 	}
 
 	right(caret){
@@ -154,16 +204,4 @@ class Word {
 		return index == this.LastIndex ? false : this.characters[index+1].grabCaret(caret);
 	}
 
-	grabCaret(caret, toEnd){
-		caret.word = this;
-		return this.characters[toEnd ? this.LastIndex : 0].grabCaret(caret);
-	}
-
-	split(caret){
-		let index = this.getCaretIndex(caret);
-		let toExtract = this.LastIndex - index;
-		let extractedCharacters = this.characters.splice(index + 1, toExtract);
-		let brokenWord = new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
-		return brokenWord;
-	}
 }

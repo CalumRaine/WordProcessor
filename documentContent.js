@@ -5,6 +5,10 @@ class Content {
 		this.pages = pages == null ? [new Page()] : pages;
 	}
 
+	get Empty(){
+		return this.pages.length == 1 && this.pages[0].Empty;
+	}
+
 	get Pages(){
 		return this.pages;
 	}
@@ -25,40 +29,49 @@ class Content {
 		return this.pages.length - 1;
 	}
 
-	grabCaret(caret, toEnd){
+	GrabCaret(caret, toEnd){
 		caret.page = this;
-		return this.pages[toEnd ? this.LastIndex : 0].grabCaret(caret, toEnd);
+		return this.pages[toEnd ? this.LastIndex : 0].GrabCaret(caret, toEnd);
+	}
+
+	Backspace(caret, event){
+		if (this.Empty){
+			// Document is empty.  Nothing to delete.
+			return false;
+		}
+
+		let index = this.getCaretIndex(caret);
+		let page = this.pages[index];
+		if (page.Backspace(caret, event) || this.Empty){
+			return true;
+		}
+		else if (index > 0) {
+			let previousPage = this.pages[index-1];
+			previousPage.GrabCaret(caret, true);
+			previousPage.AppendLines(page.Lines);
+			this.pages.splice(index, 1);
+			return true;
+		}
+
+		return false;
+	}
+
+	PageBreak(caret){
+		let index = this.getCaretIndex(caret);
+		let page = this.pages[index];
+		let brokenPage = page.split(caret);
+		this.insertPageAfter(brokenPage, index);
+		return true;
 	}
 
 	getCaretIndex(caret){
 		return this.pages.findIndex(p => p == caret.page);
 	}
 
+	/* -- */
 	left(caret){
 		let index = this.getCaretIndex(caret);
 		return index == 0 ? false : this.pages[index - 1].grabCaret(caret, true);
-	}
-
-	backspace(caret, event){
-		let index = this.getCaretIndex(caret);
-		let page = this.pages[index];
-		if (page.backspace(caret, event)){
-			return true;
-		}
-		else if (index == 0){
-			return false;
-		}
-		else if (page.Empty){
-			this.pages.splice(index, 1);
-			return this.pages[index-1].grabCaret(caret, true);
-		}
-		else {
-			let previousPage = this.pages[index-1];
-			previousPage.grabCaret(caret, true);
-			previousPage.appendLines(page.Lines);
-			this.pages.splice(index, 1);
-			return true;
-		}
 	}
 
 	right(caret){
@@ -67,20 +80,12 @@ class Content {
 	}
 
 	split(caret){
-		this.pageBreak(caret);
+		this.PageBreak(caret);
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
 		let extractedLines = this.lines.splice(index, toExtract);
 		let newPage = new Page(extractedLines);
 		return newPage;
-	}
-
-	pageBreak(caret){
-		let index = this.getCaretIndex(caret);
-		let page = this.pages[index];
-		let brokenPage = page.split(caret);
-		this.insertPageAfter(brokenPage, index);
-		return true;
 	}
 
 	insertPageAfter(page, index){

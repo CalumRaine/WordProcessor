@@ -8,9 +8,9 @@ class Page {
 		this.lines = lines == null ? [new Line()] : lines;
 	}
 
-	initParse(){
+	InitParse(){
 		this.parseCursor = 0;
-		this.lines.forEach(l => l.initParse());
+		this.lines.forEach(l => l.InitParse());
 	}
 
 	get Parsed(){
@@ -18,15 +18,35 @@ class Page {
 	}
 
 	get Lines(){
-		return this.lines;
+		return this.Empty ? [] : this.lines;
 	}
 
-	appendLines(newLines){
-		this.lines.concat(newLines);
-		return true;
+	get Characters(){
+		return this.lines.flatMap(l => l.Characters);
 	}
 
-	parseNext(){
+	get Text(){
+		return this.lines.map(l => l.Text).join("");
+	}
+
+	get Empty(){
+		return this.lines.length == 1 && this.lines[0].Empty;
+	}
+
+	get WordCount(){
+		return this.lines.reduce((sum, line) => sum + line.WordCount, 0);
+	}
+
+	get LastIndex(){
+		return this.lines.length - 1;
+	}
+
+	GrabCaret(caret, toEnd){
+		caret.page = this;
+		return this.lines[toEnd ? this.LastIndex : 0].GrabCaret(caret, toEnd);
+	}
+
+	ParseNext(){
 		// Get the next set of wrapped lines that can fit on a page
 		let maxWidth = this.bodyWidth;
 		let maxHeight = this.bodyHeight;
@@ -34,7 +54,7 @@ class Page {
 		for (let l = this.parseCursor; l < this.lines.length; ++l){
 			let lineToParse = this.lines[l];
 			do {
-				let wrappedWords = lineToParse.parseNext(maxWidth, maxHeight);
+				let wrappedWords = lineToParse.ParseNext(maxWidth, maxHeight);
 				if (wrappedWords == null){
 					// Page must wrap.  Line partially rendered but no more words can fit on page.
 					return wrappedLines.length == 0 ? null : wrappedLines;
@@ -53,55 +73,52 @@ class Page {
 		return wrappedLines;
 	}
 
-	get Characters(){
-		return this.lines.flatMap(l => l.Characters);
-	}
+	Backspace(caret, event){
+		if (this.Empty){
+			// No lines to backspace
+			// Tell parent to delete
+			return false;
+		}
 
-	get Text(){
-		return this.lines.map(l => l.Text).join("");
-	}
-
-	get Empty(){
-		return this.lines.length == 0;
-	}
-
-	get WordCount(){
-		return this.lines.reduce((sum, line) => sum + line.WordCount, 0);
-	}
-
-	get LastIndex(){
-		return this.lines.length - 1;
-	}
-
-	grabCaret(caret, toEnd){
-		caret.page = this;
-		return this.lines[toEnd ? this.LastIndex : 0].grabCaret(caret, toEnd);
-	}
-
-	getCaretIndex(caret){
-		return this.lines.findIndex(l => l == caret.line);
-	}
-
-	backspace(caret, event){
 		let index = this.getCaretIndex(caret);
+		if (index == Caret.START){
+			// Caret already at beginning
+			// Tell parent to delete and concatenate with previous page
+			return false;
+		}
+
 		let line = this.lines[index];
-		if (line.backspace(caret, event)){
+		if (line.Backspace(caret, event) || this.Empty){
 			return true;
 		}
 		else if (line.Empty){
+			// Line is empty. Delete it.  We have others.
+			// If first line, pass caret to start of next line.
+			// Else pass caret to end of previous line.
 			this.lines.splice(index, 1);
-			return this.Empty ? false : this.lines[index-1].grabCaret(caret, true);
+			return index == 0 ? this.lines[index].GrabCaret(caret, false) : this.lines[index-1].GrabCaret(caret, true);
 		}
 		else if (index > 0){
+			// Concatenate line with previous
 			let previousLine = this.lines[index-1];
-			previousLine.grabCaret(caret, true);
+			previousLine.GrabCaret(caret, true);
 			previousLine.appendWords(line.Words);
 			this.lines.splice(index, 1);
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		// No previous line.  Request page concatenation.
+		caret.line = null;
+		return false;
+	}
+
+	AppendLines(newLines){
+		this.lines.concat(newLines);
+		return true;
+	}
+
+	getCaretIndex(caret){
+		return this.lines.findIndex(l => l == caret.line);
 	}
 
 	left(caret){
@@ -115,7 +132,7 @@ class Page {
 	}
 
 	split(caret){
-		this.lineBreak(caret);
+		this.LineBreak(caret);
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
 		let extractedLines = this.lines.splice(index, toExtract);
@@ -123,11 +140,11 @@ class Page {
 		return newPage;
 	}
 
-	lineBreak(caret){
+	LineBreak(caret){
 		let index = this.getCaretIndex(caret);
-		let brokenLine = this.lines[index].split(caret);
+		let brokenLine = this.lines[index].Split(caret);
 		this.lines.splice(index + 1, 0, brokenLine);
-		brokenLine.grabCaret(caret, false);
+		brokenLine.GrabCaret(caret, false);
 		return true;
 	}
 }

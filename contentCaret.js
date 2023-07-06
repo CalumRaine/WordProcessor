@@ -7,7 +7,7 @@ class ContentCaret {
 
 	constructor(){
 		this.content = new Content();
-		this.content.grabCaret(this, false);
+		this.content.GrabCaret(this, false);
 	}
 
 	get Pages(){
@@ -26,22 +26,22 @@ class ContentCaret {
 		return this.content.WordCount;
 	}
 
-	handleKey(event){
+	HandleKey(event){
 		event.preventDefault();
 		let character = new Character(event.key);
-		this.line.insertCharacter(this, character);
+		this.line.InsertCharacter(this, character);
 	}
 
-	handleArrow(event){
+	HandleArrow(event){
 		return event.key == "ArrowLeft" ? this.left() : this.right();
 	}
 
-	handleEnter(event){
-		return event.ctrlKey ? this.content.pageBreak(this) : this.page.lineBreak(this);
+	HandleEnter(event){
+		return event.ctrlKey ? this.content.PageBreak(this) : this.page.LineBreak(this);
 	}
 
-	handleBackspace(event){
-		return this.content.backspace(this, event);
+	HandleBackspace(event){
+		return this.content.Backspace(this, event);
 	}
 
 	left(){
