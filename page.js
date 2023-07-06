@@ -161,9 +161,7 @@ class Page {
 	}
 
 	LineBreak(caret){
-		console.log("page: line break");
 		let index = this.getCaretIndex(caret);
-		console.log("page: break line", index);
 		let brokenLine = this.lines[index].LineBreak(caret);
 		this.lines.splice(index + 1, 0, brokenLine);
 		brokenLine.GrabCaret(caret, false);

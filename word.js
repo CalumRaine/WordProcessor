@@ -42,6 +42,10 @@ class Word {
 		return this.characters.length - 1;
 	}
 
+	CaretAtStart(caret){
+		return caret.word == this && this.characters[0].CaretAtStart(caret);
+	}
+
 	GrabCaret(caret, toEnd){
 		caret.word = this;
 		if (toEnd){
@@ -72,23 +76,20 @@ class Word {
 	}
 
 	BackspaceCharacter(caret){
-		// Return FALSE if now empty.  Parent will delete if there are other words in line.
-		// Return FALSE if caret now precedes word.  Parent will pass caret to prior word, or start of line.
+		// Return false if already empty or caret now at start of word
 		let index = this.getCaretIndex(caret);
-		if (index == 0 && this.characters.length == 1){
-			// Don't leave yourself empty. 
-			// Replace with dummy character
-			// Parent Line will delete you if necessary.
-			this.characters[index].character = Character.DUMMY;
-			return false;
+		let character = this.characters[index];
+		if (this.characters.length == 1){
+			// Don't leave yourself empty
+			character.Clear();
+		}
+		else {
+			// Remove character
+			this.characters.splice(index, 1);
 		}
 
-		// Remove character
-		let character = this.characters[index];
-		this.characters.splice(index, 1);
 		if (index == 0){
-			// Caret now precedes word
-			// Inform Parent Line
+			// Inform parent line that caret now precedes word
 			caret.character = null;
 			return false;
 		}
@@ -102,6 +103,7 @@ class Word {
 		let index = this.getCaretIndex(caret);
 		let toDelete = index + 1;
 		this.characters.splice(0, toDelete);
+		caret.character = null;
 		return false;
 	}
 
@@ -117,7 +119,7 @@ class Word {
 		}
 		else if (index == 0){
 			caret.character = null;
-			return false;
+			return true;
 		}
 		else {
 			return this.characters[index-1].GrabCaret(caret);

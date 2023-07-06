@@ -25,6 +25,16 @@ class Character {
 		return this.character;
 	}
 
+	CaretAtStart(caret){
+		return caret.character == null;
+	}
+
+	Clear(){
+		this.character = Character.DUMMY;
+		this.dimensions = globalCanvasContext.measureText(this.character);
+		return true;
+	}
+
 	RenderCursor(caret){
 		if (caret.character == null){
 			return this.drawCursor(this.topLeftX, this.topLeftY);
