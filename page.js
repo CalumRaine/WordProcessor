@@ -102,7 +102,7 @@ class Page {
 			// Concatenate line with previous
 			let previousLine = this.lines[index-1];
 			previousLine.GrabCaret(caret, true);
-			previousLine.appendWords(line.Words);
+			previousLine.AppendWords(line.Words);
 			this.lines.splice(index, 1);
 			return true;
 		}

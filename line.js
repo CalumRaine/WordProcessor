@@ -19,8 +19,16 @@ class Line {
 		return this.words;
 	}
 
-	appendWords(newWords){
-		this.words.concat(newWords);
+	AppendWords(newWords){
+		let leftWord = this.words[this.LastIndex];
+		let rightWord = newWords[0];
+		if (leftWord.IsTrueWord == rightWord.IsTrueWord){
+			// Join words[last] to new[first] if they are the same
+			leftWord.AppendCharacters(rightWord.Characters);
+			newWords.splice(0,1);
+		}
+
+		this.words = this.words.concat(newWords);
 		return true;
 	}
 
