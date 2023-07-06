@@ -44,7 +44,12 @@ class Word {
 
 	GrabCaret(caret, toEnd){
 		caret.word = this;
-		return this.characters[toEnd ? this.LastIndex : 0].GrabCaret(caret);
+		if (toEnd){
+			return this.characters[this.LastIndex].GrabCaret(caret);
+		}
+
+		caret.character = null;
+		return true;
 	}
 
 	InsertCharacter(caret, newCharacter){
