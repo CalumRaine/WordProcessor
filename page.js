@@ -60,7 +60,7 @@ class Page {
 					return wrappedLines.length == 0 ? null : wrappedLines;
 				}
 				else {
-					let wrappedLine = new WrappedLine(wrappedWords);
+					let wrappedLine = new WrappedLine(lineToParse, wrappedWords);
 					wrappedLines.push(wrappedLine);
 					maxHeight -= wrappedLine.Ascent;
 				}

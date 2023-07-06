@@ -11,6 +11,7 @@ class Caret {
 		globalCanvasContext.clearRect(0, 0, 1000, 1000);
 		display.Parse(this.contentCaret.Pages);
 		display.Render();
+		display.RenderCursor(this.contentCaret);
 	}
 
 	handleKey(event){

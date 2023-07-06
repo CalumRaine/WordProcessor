@@ -12,7 +12,7 @@ class Display {
 			contentPage.InitParse();
 			do {
 				let wrappedLines = contentPage.ParseNext();
-				let wrappedPage = new WrappedPage(wrappedLines);
+				let wrappedPage = new WrappedPage(contentPage, wrappedLines);
 				this.wrappedPages.push(wrappedPage);
 			} while (!contentPage.Parsed);
 		}
@@ -26,7 +26,12 @@ class Display {
 			y += wrappedPage.Height;
 			y += this.pageGap;
 		}
+	
 		return true;
+	}
+
+	RenderCursor(caret){
+		return this.wrappedPages.some(p => p.RenderCursor(caret));
 	}
 }
 
@@ -37,8 +42,12 @@ class WrappedPage {
 	bodyHeight = 700;
 	vMargin = 50;
 	hMargin = 70;
+	topLeftX = 0;
+	topLeftY = 0;
+	contentPage = null
 
-	constructor(wrappedLines){
+	constructor(contentPage, wrappedLines){
+		this.contentPage = contentPage;
 		this.wrappedLines = wrappedLines;
 	}
 
@@ -50,9 +59,15 @@ class WrappedPage {
 		return this.bodyWidth + this.hMargin + this.hMargin;
 	}
 
+	RenderCursor(caret){
+		return caret.page == this.contentPage && this.wrappedLines.some(l => l.RenderCursor(caret));
+	}
+
 	Render(x, y){
 		// draw page
 		this.debugRect(x, y, this.Width, this.Height, "black");
+		this.topLeftX = x;
+		this.topLeftY = y;
 
 		// draw body
 		x += this.hMargin;
@@ -89,9 +104,17 @@ class WrappedPage {
 
 class WrappedLine {
 	wrappedWords = [];
-	
-	constructor(wrappedWords){
+	topLeftX = 0;
+	topLeftY = 0;
+	contentLine = null;
+
+	constructor(contentLine, wrappedWords){
+		this.contentLine = contentLine;
 		this.wrappedWords = wrappedWords;
+	}
+
+	RenderCursor(caret){
+		return caret.line == this.contentLine && this.wrappedWords.some(w => w.RenderCursor(caret));
 	}
 
 	get Width(){
@@ -103,6 +126,8 @@ class WrappedLine {
 	}
 
 	Render(x, y){
+		this.topLeftX = x;
+		this.topLeftY = y;
 		for (let wrappedWord of this.wrappedWords){
 			wrappedWord.Render(x, y);
 			x += wrappedWord.Width;
@@ -113,9 +138,28 @@ class WrappedLine {
 
 class WrappedWord {
 	wrappedCharacters = [];
+	topLeftX = 0;
+	topLeftY = 0;
+	contentWord = null;
 
-	constructor(wrappedCharacters){
+	constructor(contentWord, wrappedCharacters){
+		this.contentWord = contentWord;
 		this.wrappedCharacters = wrappedCharacters;
+	}
+
+	RenderCursor(caret){
+		if (caret.word != null && caret.word != this.contentWord){
+			return false;
+		}
+		return this.wrappedCharacters.some(c => c.RenderCursor(caret));
+	}
+
+	drawCursor(){
+		globalCanvasContext.beginPath();
+		globalCanvasContext.moveTo(this.topLeftX, this.topLeftY);
+		globalCanvasContext.lineTo(this.topLeftX + this.Ascent);
+		globalCanvasContext.stroke();
+		return true;
 	}
 
 	get Width(){
@@ -131,8 +175,13 @@ class WrappedWord {
 	}
 
 	Render(x, y){
+		this.topLeftX = x;
+		this.topLeftY = y;
 		for (let wrappedCharacter of this.wrappedCharacters){
+			wrappedCharacter.topLeftX = x;
+			wrappedCharacter.topLeftY = y;
 			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
+			console.log(wrappedCharacter.topLeftX, wrappedCharacter.topLeftY);
 			x += wrappedCharacter.Width;
 		}
 		return true;

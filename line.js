@@ -56,7 +56,7 @@ class Line {
 					return wrappedWords.length == 0 ? null : wrappedWords;
 				}
 				else if (this.parseCursor == 0 || wrappedWords.length > 0 || wordToParse.IsTrueWord) {	// Don't start a wrapped line with whitespace
-					let wrappedWord = new WrappedWord(wrappedCharacters);
+					let wrappedWord = new WrappedWord(wordToParse, wrappedCharacters);
 					maxWidth -= wrappedWord.Width;
 					wrappedWords.push(wrappedWord);
 				}

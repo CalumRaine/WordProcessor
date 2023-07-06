@@ -25,6 +25,26 @@ class Character {
 		return this.character;
 	}
 
+	RenderCursor(caret){
+		if (caret.character == null){
+			return this.drawCursor(this.topLeftX, this.topLeftY);
+		}
+		else if (caret.character == this){
+			return this.drawCursor(this.topLeftX + this.Width, this.topLeftY);
+		}
+		else {
+			return false;
+		}
+	}
+
+	drawCursor(x, y){
+		globalCanvasContext.beginPath();
+		globalCanvasContext.moveTo(x, y - this.Ascent);
+		globalCanvasContext.lineTo(x, y);
+		globalCanvasContext.stroke();
+		return true;
+	}
+
 	Replace(newCharacter){
 		this.character = newCharacter.character;
 		this.dimensions = globalCanvasContext.measureText(this.character);
