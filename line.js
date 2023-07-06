@@ -188,12 +188,17 @@ class Line {
 
 	Left(caret){
 		let index = this.getCaretIndex(caret);
+		if (index == Caret.START){
+			return false;
+		}
+
 		let word = this.words[index];
 		if (word.Left(caret)){
 			return true;
 		}
 		else if (index == 0){
-			return false;
+			caret.word = null;
+			return true;
 		}
 		else {
 			let previousWord = this.words[index-1];
