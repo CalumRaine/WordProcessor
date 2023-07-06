@@ -186,20 +186,33 @@ class Line {
 		return true;
 	}
 
-	/* ---- */
-	left(caret){
+	Left(caret){
 		let index = this.getCaretIndex(caret);
-		return index == 0 ? false : this.words[index-1].grabCaret(caret, true);
+		let word = this.words[index];
+		if (word.Left(caret)){
+			return true;
+		}
+		else if (index == 0){
+			return false;
+		}
+		else {
+			let previousWord = this.words[index-1];
+			return previousWord.GrabCaret(caret, true);
+		}
 	}
 
-	right(caret){
+	Right(caret){
 		let index = this.getCaretIndex(caret);
-		return index == this.LastIndex ? false : this.words[index+1].grabCaret(caret, false);
-	}
-
-	insertWordBefore(caret, word, index){
-		this.words.splice(index, 0, word);
-		word.grabCaret(caret, true);
-		return true;
+		let word = this.words[index];
+		if (word.Right(caret)){
+			return true;
+		}
+		else if (index == this.LastIndex){
+			return false;
+		}
+		else {
+			let nextWord = this.words[index+1];
+			return nextWord.GrabCaret(caret, false);
+		}
 	}
 }

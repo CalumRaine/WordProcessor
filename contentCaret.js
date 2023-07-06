@@ -33,6 +33,7 @@ class ContentCaret {
 	}
 
 	HandleArrow(event){
+		event.preventDefault();
 		return event.key == "ArrowLeft" ? this.left() : this.right();
 	}
 
@@ -45,20 +46,10 @@ class ContentCaret {
 	}
 
 	left(){
-		if (this.word.left(this) || this.line.left(this) || this.page.left(this)){
-			return true;
-		}
-		else {
-			return console.log("ArrowLeft ignored.  Already at start of document.");
-		}
+		return this.page.Left(this) ? true : console.log("Already at start of document");
 	}
 
 	right(){
-		if (this.word.right(this) || this.line.right(this) || this.page.right(this)){
-			return true;
-		}
-		else {
-			return console.log("ArrowRight ignored.  Already at end of document.");
-		}
+		return this.page.Right(this) ? true : console.log("Already at end of document");
 	}
 }

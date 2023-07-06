@@ -121,14 +121,34 @@ class Page {
 		return this.lines.findIndex(l => l == caret.line);
 	}
 
-	left(caret){
+	Left(caret){
 		let index = this.getCaretIndex(caret);
-		return index == 0 ? false : this.lines[index - 1].grabCaret(caret, true);
+		let line = this.lines[index];
+		if (line.Left(caret)){
+			return true;
+		}
+		else if (index == 0){
+			return false;
+		}
+		else {
+			let previousLine = this.lines[index-1];
+			return previousLine.GrabCaret(caret, true);
+		}
 	}
 
-	right(caret){
+	Right(caret){
 		let index = this.getCaretIndex(caret);
-		return index == this.LastIndex ? false : this.lines[index + 1].grabCaret(caret, false);
+		let line = this.lines[index];
+		if (line.Right(caret)){
+			return true;
+		}
+		else if (index == this.LastIndex){
+			return false;
+		}
+		else {
+			let nextLine = this.lines[index+1];
+			return nextLine.GrabCaret(caret, false);
+		}
 	}
 
 	split(caret){

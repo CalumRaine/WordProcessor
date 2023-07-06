@@ -181,7 +181,6 @@ class WrappedWord {
 			wrappedCharacter.topLeftX = x;
 			wrappedCharacter.topLeftY = y;
 			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
-			console.log(wrappedCharacter.topLeftX, wrappedCharacter.topLeftY);
 			x += wrappedCharacter.Width;
 		}
 		return true;

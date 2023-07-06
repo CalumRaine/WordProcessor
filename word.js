@@ -100,6 +100,30 @@ class Word {
 		return false;
 	}
 
+	AppendCharacters(newCharacters){
+		this.characters = this.characters.concat(newCharacters);
+		return true;
+	}
+
+	Left(caret){
+		let index = this.getCaretIndex(caret);
+		if (index == Caret.START){
+			return false;
+		}
+		else if (index == 0){
+			caret.character = null;
+			return false;
+		}
+		else {
+			return this.characters[index-1].GrabCaret(caret);
+		}
+	}
+
+	Right(caret){
+		let index = this.getCaretIndex(caret);
+		return index == this.LastIndex ? false : this.characters[index+1].GrabCaret(caret);
+	}
+
 	Split(caret){
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
@@ -147,61 +171,4 @@ class Word {
 	getCaretIndex(caret){
 		return this.characters.findIndex(c => c == caret.character);
 	}
-
-	/* ------ */
-
-	prepend(caret, newCharacter){
-		if (this.Empty){
-			this.characters[0] = newCharacter;
-			newCharacter.grabCaret(caret);
-			return true;
-		}
-		else if (newCharacter.IsWordCharacter != this.IsTrueWord){
-			return false;
-		}
-		else {
-			this.characters.splice(0, 0, newCharacter);
-			this.grabCaret(caret, false);
-			return true;
-		}
-	}
-
-	append(caret, newCharacter){
-		this.characters.splice(this.LastIndex, 0, newCharacter);
-		this.grabCaret(caret, true);
-		return true;
-	}
-
-	appendCharacters(caret, newCharacters){
-		this.characters = this.characters.concat(newCharacters);
-		return true;
-	}
-
-	caretAtStart(caret){
-		return this.getCaretIndex(caret) == 0;
-	}
-
-	caretAtEnd(caret){
-		return this.getCaretIndex(caret) == this.LastIndex;
-	}
-
-	left(caret){
-		let index = this.getCaretIndex(caret);
-		if (index < 0){
-			return false;
-		}
-		else if (index == 0){
-			caret.character = null;
-			return true;
-		}
-		else {
-			return this.characters[index-1].grabCaret(caret);
-		}
-	}
-
-	right(caret){
-		let index = this.getCaretIndex(caret);
-		return index == this.LastIndex ? false : this.characters[index+1].grabCaret(caret);
-	}
-
 }
