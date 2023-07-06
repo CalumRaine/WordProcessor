@@ -19,17 +19,8 @@ class Line {
 		return this.words;
 	}
 
-	AppendWords(newWords){
-		let leftWord = this.words[this.LastIndex];
-		let rightWord = newWords[0];
-		if (leftWord.IsTrueWord == rightWord.IsTrueWord){
-			// Join words[last] to new[first] if they are the same
-			leftWord.AppendCharacters(rightWord.Characters);
-			newWords.splice(0,1);
-		}
-
-		this.words = this.words.concat(newWords);
-		return true;
+	get Ascent(){
+		return Math.max(...this.words.map(w => w.Ascent));
 	}
 
 	get Characters(){
@@ -50,6 +41,19 @@ class Line {
 
 	get Empty(){
 		return this.words.every(w => w.Empty);
+	}
+
+	AppendWords(newWords){
+		let leftWord = this.words[this.LastIndex];
+		let rightWord = newWords[0];
+		if (leftWord.IsTrueWord == rightWord.IsTrueWord){
+			// Join words[last] to new[first] if they are the same
+			leftWord.AppendCharacters(rightWord.Characters);
+			newWords.splice(0,1);
+		}
+
+		this.words = this.words.concat(newWords);
+		return true;
 	}
 
 	ParseNext(maxWidth, maxHeight){
@@ -108,11 +112,12 @@ class Line {
 		return true;
 	}
 
-	Split(caret){
+	LineBreak(caret){
 		let index = this.getCaretIndex(caret);
-		this.wordBreak(caret);
-		let toExtract = this.LastIndex - index;
-		let extractedWords = this.words.splice(index + 1, toExtract);
+		let word = this.words[index];
+		let secondHalfOfWord = word.WordBreak(caret);
+		this.words.splice(index+1, 0, secondHalfOfWord);
+		let extractedWords = this.words.splice(index + 1);
 		let brokenLine = new Line(extractedWords.length == 0 ? null : extractedWords);
 		return brokenLine;
 	}
@@ -184,13 +189,12 @@ class Line {
 	wordBreak(caret){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		let newWord = word.Split(caret);
+		let newWord = word.WordBreak(caret);
 		return newWord.Empty ? true : this.insertWordAfter(caret, newWord, index);
 	}
 
 	insertWordAfter(caret, newWord, index){
 		this.words.splice(index + 1, 0, newWord);
-		//newWord.GrabCaret(caret, true);
 		return true;
 	}
 

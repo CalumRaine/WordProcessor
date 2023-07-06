@@ -129,7 +129,11 @@ class Word {
 		return index == this.LastIndex ? false : this.characters[index+1].GrabCaret(caret);
 	}
 
-	Split(caret){
+	WordBreak(caret){
+		if (this.Empty){
+			return new Word(null);
+		}
+
 		let index = this.getCaretIndex(caret);
 		let toExtract = this.LastIndex - index;
 		let extractedCharacters = this.characters.splice(index + 1, toExtract);

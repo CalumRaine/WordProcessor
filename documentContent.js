@@ -59,7 +59,7 @@ class Content {
 	PageBreak(caret){
 		let index = this.getCaretIndex(caret);
 		let page = this.pages[index];
-		let brokenPage = page.split(caret);
+		let brokenPage = page.PageBreak(caret);
 		this.insertPageAfter(brokenPage, index);
 		return true;
 	}

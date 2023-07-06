@@ -14,7 +14,7 @@ class Character {
 	}
 
 	get Ascent(){
-		return this.dimensions.actualBoundingBoxAscent;
+		return this.dimensions.fontBoundingBoxAscent;
 	}
 
 	get Empty(){
