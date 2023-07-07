@@ -1,4 +1,4 @@
-class Content {
+class DocumentContent {
 	pages = [];
 
 	constructor(pages){
@@ -30,17 +30,17 @@ class Content {
 	}
 
 	GrabCaret(caret, toEnd){
-		caret.page = this;
 		return this.pages[toEnd ? this.LastIndex : 0].GrabCaret(caret, toEnd);
 	}
 
-	Backspace(caret, event){
+	HandleBackspace(event, caret){
 		if (this.Empty){
 			// Document is empty.  Nothing to delete.
 			return false;
 		}
 
 		let index = this.getCaretIndex(caret);
+		console.log(this.pages.length, index);
 		let page = this.pages[index];
 		if (page.Backspace(caret, event) || this.Empty){
 			return true;

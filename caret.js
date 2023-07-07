@@ -1,46 +1,34 @@
 class Caret {
 	static START = -1;
-	contentCaret = new ContentCaret();
-	displayCaret = null; // not yet implemented
+	page = null;
+	line = null;
+	word = null;
+	character = null;
 	
 	constructor(){
-		document.addEventListener("keydown", (event) => this.handleKey(event));
+
 	}
 
-	render(){
-		globalCanvasContext.clearRect(0, 0, 1000, 1000);
-		display.Parse(this.contentCaret.Pages);
-		display.Render();
-		display.RenderCursor(this.contentCaret);
+	HandleKey(event){
+		event.preventDefault();
+		let character = new Character(event.key);
+		this.line.InsertCharacter(this, character);
 	}
 
-	handleKey(event){
-		const specialKeys = ["Control", "Alt", "Shift", "Meta"];
-		if (event.key.includes("Arrow")){
-			this.handleArrow(event);
-		}
-		else if (event.key == "Enter"){
-			this.handleEnter(event);
-		}
-		else if (event.key == "Backspace"){
-			this.contentCaret.HandleBackspace(event);
-		}
-		else if (!specialKeys.includes(event.key)){
-			this.contentCaret.HandleKey(event);
-		}
-		this.render();
+	HandleEnter(){
+		return this.page.LineBreak(this);
 	}
 
-	handleArrow(event){
-		if (event.key.includes("Left") || event.key.includes("Right")){
-			return this.contentCaret.HandleArrow(event);
-		}
-		else {
-			return console.log(event.key, "Not yet handled");
-		}
+	HandleArrow(event){
+		event.preventDefault();
+		return event.key == "ArrowLeft" ? this.left() : this.right();
 	}
 
-	handleEnter(event){
-		return this.contentCaret.HandleEnter(event);
+	left(){
+		return this.page.Left(this) ? true : console.log("Already at start of document");
+	}
+
+	right(){
+		return this.page.Right(this) ? true : console.log("Already at end of document");
 	}
 }

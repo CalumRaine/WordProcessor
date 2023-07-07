@@ -2,14 +2,20 @@
 <html>
 <head>
 	<link rel="stylesheet" href="styles.css"/>
+	<script src="./calumDocument.js"></script>
 	<script src="./caret.js"></script>
-	<script src="./contentCaret.js"></script>
+
 	<script src="./documentContent.js"></script>
 	<script src="./page.js"></script>
 	<script src="./line.js"></script>
 	<script src="./word.js"></script>
+
+	<script src="./documentDisplay.js"></script>
+	<script src="./wrappedPage.js"></script>
+	<script src="./wrappedWord.js"></script>
+	<script src="./wrappedLine.js"></script>
+
 	<script src="./character.js"></script>
-	<script src="./display.js"></script>
 </head>
 <body>
 	<canvas></canvas>
@@ -19,8 +25,7 @@
 		canvas.height = 1000;
 		var globalCanvasContext = canvas.getContext("2d");
 		globalCanvasContext.font = "20px sans-serif";
-		var caret = new Caret();
-		var display = new Display();
+		var calumDocument = new CalumDocument();
 	</script>
 </body>
 </html>
