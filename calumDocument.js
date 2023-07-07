@@ -1,3 +1,6 @@
+// Master object.  
+// Coordinates content, display and caret.  
+// Should really extend the HTML canvas element directly.
 class CalumDocument {
 	content = new DocumentContent();
 	display = new DocumentDisplay();

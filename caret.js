@@ -1,3 +1,4 @@
+// Holds the page, line, word and character where the user is set to edit
 class Caret {
 	static START = -1;
 	page = null;

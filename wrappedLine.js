@@ -1,3 +1,4 @@
+// Display line
 class WrappedLine {
 	wrappedWords = [];
 	topLeftX = 0;

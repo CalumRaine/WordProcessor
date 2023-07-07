@@ -1,3 +1,4 @@
+// Text buffer edited by user
 class DocumentContent {
 	pages = [];
 

@@ -1,3 +1,4 @@
+// Content page
 class Page {
 	lines = [];
 	parseCursor = 0;

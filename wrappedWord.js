@@ -1,3 +1,4 @@
+// Display word
 class WrappedWord {
 	wrappedCharacters = [];
 	topLeftX = 0;

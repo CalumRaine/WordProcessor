@@ -1,3 +1,4 @@
+// Content element (p, ul, ol, etc)
 class Line {
 	words = [];
 	parseCursor = 0;

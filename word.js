@@ -1,3 +1,4 @@
+// Content word
 class Word {
 	characters = [];
 	parseCursor = 0;

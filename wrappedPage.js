@@ -1,3 +1,4 @@
+// Display paper
 class WrappedPage {
 	wrappedLines = [];
 	lineGap = 5;

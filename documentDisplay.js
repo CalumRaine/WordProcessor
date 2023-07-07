@@ -1,3 +1,4 @@
+// Parses text buffer and displays on screen
 class DocumentDisplay {
 	wrappedPages = [];
 	pageGap = 20;
