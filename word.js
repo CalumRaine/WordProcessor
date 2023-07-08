@@ -13,6 +13,8 @@ class Word {
 
 	InitParse(){
 		this.parseCursor = 0;
+		this.characters.forEach(c => c.InitParse());
+		return true;
 	}
 
 	get Parsed(){
@@ -145,10 +147,11 @@ class Word {
 		return brokenWord;
 	}
 
-	ParseNext(maxWidth, maxHeight, forceBreak){
+	ParseNext(maxWidth, maxHeight, x, y, forceBreak){
 		// Get the next set of characters that can fit on a line
 		if (this.Width <= maxWidth){
 			// Word fits on page
+			this.characters.forEach(c => { c.Parse(x, y); x += c.Width; });
 			this.parseCursor = this.characters.length;
 			return this.characters;
 		}
@@ -158,7 +161,7 @@ class Word {
 		}
 		else if (forceBreak){
 			// Word forced to split to fit on line
-			return this.forceRenderNext(maxWidth, maxHeight);
+			return this.forceRenderNext(maxWidth, maxHeight, x, y);
 		}
 		else {
 			// Line must break to fit this word
@@ -166,7 +169,7 @@ class Word {
 		}
 	}
 
-	forceRenderNext(maxWidth, maxHeight){
+	forceRenderNext(maxWidth, maxHeight, x, y){
 		// Word can be forced to break if it is longer than line length
 		let wrappedCharacters = [];
 		for (let c = this.parseCursor; c < this.characters.length; ++c){
@@ -174,7 +177,9 @@ class Word {
 			if (wrappedCharacter.Ascent > maxHeight || wrappedCharacter.Width > maxWidth){
 				return wrappedCharacters.length == 0 ? null : wrappedCharacters;
 			}
+			wrappedCharacter.Parse(x, y);
 			wrappedCharacters.push(wrappedCharacter);
+			x += wrappedCharacter.Width;
 			maxWidth -= wrappedCharacter.Width;
 			++this.parseCursor;
 		}

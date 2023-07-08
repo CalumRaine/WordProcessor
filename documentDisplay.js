@@ -8,12 +8,16 @@ class DocumentDisplay {
 	}
 
 	Parse(contentPages){
+		let x = 0;
+		let y = 0;
 		this.wrappedPages = [];
 		for (let contentPage of contentPages){
 			contentPage.InitParse();
 			do {
-				let wrappedLines = contentPage.ParseNext();
-				let wrappedPage = new WrappedPage(contentPage, wrappedLines);
+				let wrappedLines = contentPage.ParseNext(x, y);
+				let wrappedPage = new WrappedPage(contentPage, wrappedLines, x, y);
+				y += wrappedPage.Height;
+				y += this.pageGap;
 				this.wrappedPages.push(wrappedPage);
 			} while (!contentPage.Parsed);
 		}

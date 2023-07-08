@@ -4,6 +4,7 @@ class Page {
 	parseCursor = 0;
 	bodyWidth = 500;
 	bodyHeight = 700;
+	lineGap = 5;
 
 	constructor(lines){
 		this.lines = lines == null ? [new Line()] : lines;
@@ -12,6 +13,7 @@ class Page {
 	InitParse(){
 		this.parseCursor = 0;
 		this.lines.forEach(l => l.InitParse());
+		return true;
 	}
 
 	get Parsed(){
@@ -52,7 +54,7 @@ class Page {
 		return this.lines[this.LastIndex].PutCaretAtEnd(caret);
 	}
 
-	ParseNext(){
+	ParseNext(x, y){
 		// Get the next set of wrapped lines that can fit on a page
 		let maxWidth = this.bodyWidth;
 		let maxHeight = this.bodyHeight;
@@ -60,14 +62,16 @@ class Page {
 		for (let l = this.parseCursor; l < this.lines.length; ++l){
 			let lineToParse = this.lines[l];
 			do {
-				let wrappedWords = lineToParse.ParseNext(maxWidth, maxHeight);
+				let wrappedWords = lineToParse.ParseNext(maxWidth, maxHeight, x, y);
 				if (wrappedWords == null){
 					// Page must wrap.  Line partially rendered but no more words can fit on page.
 					return wrappedLines.length == 0 ? null : wrappedLines;
 				}
 				else {
-					let wrappedLine = new WrappedLine(lineToParse, wrappedWords);
+					let wrappedLine = new WrappedLine(lineToParse, wrappedWords, x, y);
 					wrappedLines.push(wrappedLine);
+					y += wrappedLine.Ascent;
+					y += this.lineGap;
 					maxHeight -= wrappedLine.Ascent;
 				}
 			} while (!lineToParse.Parsed);

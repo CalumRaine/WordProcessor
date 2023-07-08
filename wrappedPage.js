@@ -6,13 +6,17 @@ class WrappedPage {
 	bodyHeight = 700;
 	vMargin = 50;
 	hMargin = 70;
-	topLeftX = 0;
-	topLeftY = 0;
+	screenX = 0;
+	screenY = 0;
+	documentX = 0;
+	documentY = 0;
 	contentPage = null
 
-	constructor(contentPage, wrappedLines){
+	constructor(contentPage, wrappedLines, x, y){
 		this.contentPage = contentPage;
 		this.wrappedLines = wrappedLines;
+		this.documentX = x;
+		this.documentY = y;
 	}
 
 	get Height(){

@@ -1,13 +1,17 @@
 // Display line
 class WrappedLine {
 	wrappedWords = [];
-	topLeftX = 0;
-	topLeftY = 0;
+	documentX = 0;
+	documentY = 0;
+	screenX = 0;
+	screenY = 0;
 	contentLine = null;
 
-	constructor(contentLine, wrappedWords){
+	constructor(contentLine, wrappedWords, x, y){
 		this.contentLine = contentLine;
 		this.wrappedWords = wrappedWords;
+		this.documentX = x;
+		this.documentY = y;
 	}
 
 	RenderCursor(caret){
@@ -23,8 +27,8 @@ class WrappedLine {
 	}
 
 	Render(x, y){
-		this.topLeftX = x;
-		this.topLeftY = y;
+		this.screenX = x;
+		this.screenY = y;
 		for (let wrappedWord of this.wrappedWords){
 			wrappedWord.Render(x, y);
 			x += wrappedWord.Width;

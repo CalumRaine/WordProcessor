@@ -3,10 +3,32 @@ class Character {
 	character = "";
 	dimensions = null;
 	caret = null;
+	documentX = 0;
+	documentY = 0;
+	screenX = 0;
+	screenY = 0;
 	
 	constructor(character){
 		this.character = character == null ? Character.DUMMY : character;
 		this.dimensions = globalCanvasContext.measureText(this.character);
+	}
+
+	InitParse(){
+		this.documentX = 0;
+		this.documentY = 0;
+		this.screenX = 0;
+		this.screenY = 0;
+		return true;
+	}
+
+	Parse(x, y){
+		this.documentX = x;
+		this.documentY = y;
+	}
+
+	Render(x, y){
+		this.screenX = x;
+		this.screenY = y;
 	}
 
 	get Width(){

@@ -10,6 +10,7 @@ class Line {
 	InitParse(){
 		this.parseCursor = 0;
 		this.words.forEach(w => w.InitParse());
+		return true;
 	}
 
 	get Parsed(){
@@ -61,19 +62,20 @@ class Line {
 		return true;
 	}
 
-	ParseNext(maxWidth, maxHeight){
+	ParseNext(maxWidth, maxHeight, x, y){
 		// Get the next set of wrapped words that can fit on a line
 		let wrappedWords = [];
 		for (let w = this.parseCursor; w < this.words.length; ++w){
 			let wordToParse = this.words[w];
 			do {
-				let wrappedCharacters = wordToParse.ParseNext(maxWidth, maxHeight, wrappedWords.length == 0);
+				let wrappedCharacters = wordToParse.ParseNext(maxWidth, maxHeight, x, y, wrappedWords.length == 0);
 				if (wrappedCharacters == null){
 					// Line must wrap.  No more characters can fit on line.
 					return wrappedWords.length == 0 ? null : wrappedWords;
 				}
 				else if (this.parseCursor == 0 || wrappedWords.length > 0 || wordToParse.IsTrueWord) {	// Don't start a wrapped line with whitespace
-					let wrappedWord = new WrappedWord(wordToParse, wrappedCharacters);
+					let wrappedWord = new WrappedWord(wordToParse, wrappedCharacters, x, y);
+					x += wrappedWord.Width;
 					maxWidth -= wrappedWord.Width;
 					wrappedWords.push(wrappedWord);
 				}

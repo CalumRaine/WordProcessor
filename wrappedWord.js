@@ -1,13 +1,17 @@
 // Display word
 class WrappedWord {
 	wrappedCharacters = [];
-	topLeftX = 0;
-	topLeftY = 0;
+	screenX = 0;
+	screenY = 0;
+	documentX = 0;
+	documentY = 0;
 	contentWord = null;
 
-	constructor(contentWord, wrappedCharacters){
+	constructor(contentWord, wrappedCharacters, x, y){
 		this.contentWord = contentWord;
 		this.wrappedCharacters = wrappedCharacters;
+		this.documentX = x;
+		this.documentY = y;
 	}
 
 	RenderCursor(caret){
@@ -38,11 +42,10 @@ class WrappedWord {
 	}
 
 	Render(x, y){
-		this.topLeftX = x;
-		this.topLeftY = y;
+		this.screenX = x;
+		this.screenY = y;
 		for (let wrappedCharacter of this.wrappedCharacters){
-			wrappedCharacter.topLeftX = x;
-			wrappedCharacter.topLeftY = y;
+			wrappedCharacter.Render(x, y);
 			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
 			x += wrappedCharacter.Width;
 		}
