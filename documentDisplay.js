@@ -7,6 +7,10 @@ class DocumentDisplay {
 
 	}
 
+	get LastIndex(){
+		return this.wrappedPages.length - 1;
+	}
+
 	Parse(contentPages){
 		let x = 0;
 		let y = 0;
@@ -56,6 +60,22 @@ class DocumentDisplay {
 		else {
 			let previousPage = this.pages[index-1];
 			return previousPage.PutCaretOnLast(caret);
+		}
+	}
+
+	down(caret){
+		let index = this.getCaretIndex(caret);
+		let page = this.wrappedPages[index];
+		if (page.Down(caret)){
+			return true;
+		}
+		else if (index == this.LastIndex){
+			console.log("Ignored.  Already at end of document.");
+			return false;
+		}
+		else {
+			let nextPage = this.pages[index+1];
+			return nextPage.PutCaretOnFirst(caret);
 		}
 	}
 

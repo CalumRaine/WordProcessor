@@ -65,9 +65,19 @@ class WrappedPage {
 		return index == 0 ? false : this.wrappedLines[index-1].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
 	}
 
-	PutCaretAtLast(caret){
+	Down(caret){
+		let index = this.getCaretIndex(caret);
+		return index == this.LastIndex ? false : this.wrappedLines[index+1].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
+	}
+
+	PutCaretOnFirst(caret){
 		caret.page = this.contentPage;
-		return this.lines[this.LastIndex].PutCaretAtX(caret, caret.character?.screenX);
+		return this.lines[0].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
+	}
+
+	PutCaretOnLast(caret){
+		caret.page = this.contentPage;
+		return this.lines[this.LastIndex].PutCaretAtX(caret, caret.character?.documentX + caret.caret.character?.Width);
 	}
 
 	getCaretIndex(caret){
