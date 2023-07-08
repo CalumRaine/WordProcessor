@@ -45,7 +45,7 @@ class Page {
 	}
 
 	CaretAtStart(caret){
-		return caret.OnLeft && caret.page == this && this.lines[0].CaretAtStart(caret);
+		return caret.page == this && (this.Empty || this.lines[0].CaretAtStart(caret));
 	}
 
 	PutCaretAtStart(caret){

@@ -46,11 +46,11 @@ class Line {
 	}
 
 	CaretAtStart(caret){
-		return caret.line == this && this.words[0].CaretAtStart(caret);
+		return caret.line == this && (this.Empty || this.words[0].CaretAtStart(caret));
 	}
 
 	CaretAtEnd(caret){
-		return caret.line == this && this.words[this.LastIndex].CaretAtEnd(caret);
+		return caret.line == this && (this.Empty || this.words[this.LastIndex].CaretAtEnd(caret));
 	}
 
 	AppendWords(newWords){
