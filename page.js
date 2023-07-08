@@ -133,14 +133,15 @@ class Page {
 		return this.lines.findIndex(l => l == caret.line);
 	}
 
-	Left(caret){
+	HandleLeft(event, caret){
 		let index = this.getCaretIndex(caret);
 		let line = this.lines[index];
-		if (line.Left(caret)){
+		if (line.HandleLeft(event, caret)){
 			return true;
 		}
 		else if (index > 0) {
-			let previousLine = this.lines[index-1];
+			--index;
+			let previousLine = this.lines[index];
 			previousLine.PutCaretAtEnd(caret);
 			return true;
 		}
@@ -149,14 +150,15 @@ class Page {
 		}
 	}
 
-	Right(caret){
+	HandleRight(event, caret){
 		let index = this.getCaretIndex(caret);
 		let line = this.lines[index];
-		if (line.Right(caret)){
+		if (line.HandleRight(event, caret)){
 			return true;
 		}
 		else if (index < this.LastIndex) {
-			let nextLine = this.lines[index+1];
+			++index;
+			let nextLine = this.lines[index];
 			nextLine.PutCaretAtStart(caret);
 			return true;
 		}

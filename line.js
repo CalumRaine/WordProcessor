@@ -226,32 +226,41 @@ class Line {
 		return true;
 	}
 
-	Left(caret){
+	HandleLeft(event, caret){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		if (word.Left(caret)){
+		if (!event.ctrlKey && word.LeftCharacter(caret)){
+			return true;
+		}
+		else if (event.ctrlKey && word.LeftWord(caret)){
 			return true;
 		}
 		else if (index > 0){
-			let previousWord = this.words[index-1];
-			previousWord.PutCaretAtLast(caret);
-			return true;
+			--index;
+			let previousWord = this.words[index];
+			previousWord.PutCaretAtEnd(caret);
+			return this.HandleLeft(event, caret);
 		}
 		else {
 			return false;
 		}
+
 	}
 
-	Right(caret){
+	HandleRight(event, caret){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		if (word.Right(caret)){
+		if (!event.ctrlKey && word.RightCharacter(caret)){
+			return true;
+		}
+		else if (event.ctrlKey && word.RightWord(caret)){
 			return true;
 		}
 		else if (index < this.LastIndex) {
-			let nextWord = this.words[index+1];
-			nextWord.PutCaretAtFirst(caret);
-			return true;
+			++index;
+			let nextWord = this.words[index];
+			nextWord.PutCaretAtStart(caret);
+			return this.HandleRight(event, caret);
 		}
 		else {
 			return false;

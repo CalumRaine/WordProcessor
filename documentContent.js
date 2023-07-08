@@ -61,7 +61,7 @@ class DocumentContent {
 	}
 
 	HandleArrow(event, caret){
-		return event.key == "ArrowLeft" ? this.left(caret) : this.right(caret);
+		return event.key == "ArrowLeft" ? this.handleLeft(event, caret) : this.handleRight(event, caret);
 	}
 
 	PageBreak(caret){
@@ -82,33 +82,39 @@ class DocumentContent {
 		return this.pages.findIndex(p => p == caret.page);
 	}
 
-	left(caret){
+	handleLeft(event, caret){
 		let index = this.getCaretIndex(caret);
 		let page = this.pages[index];
-		if (page.Left(caret)){
+		if (page.HandleLeft(event, caret)){
 			return true;
 		}
-		else if (index == 0){
+		else if (index > 0){
+			--index;
+			let previousPage = this.pages[index];
+			previousPage.PutCaretAtEnd(caret);
+			return true;
+		}
+		else {
 			console.log("Ignored.  Already at start of document.");
 			return false;
 		}
-		else {
-			return this.pages[index-1].PutCaretAtEnd(caret);
-		}
 	}
 
-	right(caret){
+	handleRight(event, caret){
 		let index = this.getCaretIndex(caret);
 		let page = this.pages[index];
-		if (page.Right(caret)){
+		if (page.HandleRight(event, caret)){
 			return true;
 		}
-		else if (index == this.LastIndex){
-			console.log("Ignored.  Already at end of document.");
-			return false;
+		else if (index < this.LastIndex){
+			++index;
+			let nextPage = this.pages[index];
+			nextPage.PutCaretAtStart(caret);
+			return true;
 		}
 		else {
-			return this.pages[index+1].PutCaretAtStart(caret);
+			console.log("Ignored.  Already at end of document.");
+			return false;
 		}
 	}
 

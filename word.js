@@ -171,7 +171,7 @@ class Word {
 		return true;
 	}
 
-	Left(caret){
+	LeftCharacter(caret){
 		let index = this.getCaretIndex(caret);
 		let character = this.characters[index];
 		if (character.Left(caret)){
@@ -187,7 +187,11 @@ class Word {
 		}
 	}
 
-	Right(caret){
+	LeftWord(caret){
+		return this.CaretAtStart(caret) ? false : this.PutCaretAtStart(caret);
+	}
+
+	RightCharacter(caret){
 		let index = this.getCaretIndex(caret);
 		let character = this.characters[index];
 		if (character.Right(caret)){
@@ -201,6 +205,10 @@ class Word {
 		else {
 			return false;
 		}
+	}
+
+	RightWord(caret){
+		return this.CaretAtEnd(caret) ? false : this.PutCaretAtEnd(caret);
 	}
 
 	WordBreak(caret){
