@@ -87,7 +87,7 @@ class Page {
 		return wrappedLines;
 	}
 
-	Backspace(caret, event){
+	HandleBackspace(event, caret){
 		if (this.CaretAtStart(caret)){
 			// Caret already at start of page.  No can do.
 			return false;
@@ -109,9 +109,14 @@ class Page {
 		else if (index > 0){
 			// Concatenate line with previous
 			let previousLine = this.lines[index-1];
-			previousLine.PutCaretAtEnd(caret);
-			previousLine.AppendWords(line.Words);
-			this.lines.splice(index, 1);
+			if (previousLine.Empty){
+				this.lines.splice(index-1, 1);
+			}
+			else {
+				previousLine.PutCaretAtEnd(caret);
+				previousLine.AppendWords(line.Words);
+				this.lines.splice(index, 1);
+			}
 			return true;
 		}
 
@@ -171,7 +176,8 @@ class Page {
 
 	LineBreak(caret){
 		let index = this.getCaretIndex(caret);
-		let brokenLine = this.lines[index].LineBreak(caret);
+		let line = this.lines[index];
+		let brokenLine = line.LineBreak(caret);
 		this.lines.splice(index + 1, 0, brokenLine);
 		brokenLine.PutCaretAtStart(caret);
 		return true;

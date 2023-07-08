@@ -42,14 +42,24 @@ class Line {
 	}
 
 	get Empty(){
-		return this.words[0].Empty;
+		return this.words.length == 1 && this.words[0].Empty;
 	}
 
 	CaretAtStart(caret){
-		return caret.OnLeft && caret.line == this && this.words[0].CaretAtStart(caret);
+		return caret.line == this && this.words[0].CaretAtStart(caret);
 	}
 
-	AppendWords(newWords){	// not checked
+	CaretAtEnd(caret){
+		return caret.line == this && this.words[this.LastIndex].CaretAtEnd(caret);
+	}
+
+	AppendWords(newWords){
+		if (this.Empty){
+			this.words.pop();
+			this.words = this.words.concat(newWords);
+			return true;
+		}
+
 		let leftWord = this.words[this.LastIndex];
 		let rightWord = newWords[0];
 		if (leftWord.IsTrueWord == rightWord.IsTrueWord){
@@ -91,13 +101,36 @@ class Line {
 	InsertCharacter(caret, newCharacter){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		if (!word.InsertCharacter(caret, newCharacter)){
-			// Character rejected: Cannot mix whitespace with characters.
-			// Split word and insert new between
-			let brokenWord = word.WordBreak(caret);
-			if (!brokenWord.Empty){
-				this.words.splice(index + 1, 0, brokenWord);
+		if (word.InsertCharacter(caret, newCharacter)){
+			return true;
+		}
+		else if (word.CaretAtStart(caret)){
+			if (index == 0){
+				let newWord = new Word([newCharacter]);
+				this.words.splice(index, 0, newWord);
+				newWord.PutCaretAtEnd(caret);
 			}
+			else {
+				let previousWord = this.words[index-1];
+				previousWord.PutCaretAtEnd(caret);
+				previousWord.InsertCharacter(caret, newCharacter);
+			}
+		}
+		else if (word.CaretAtEnd(caret)){
+			if (index == this.LastIndex){
+				let newWord = new Word([newCharacter]);
+				this.words.splice(index + 1, 0, newWord);
+				newWord.PutCaretAtEnd(caret);
+			}
+			else {
+				let nextWord = this.words[index+1];
+				nextWord.PutCaretAtStart(caret);
+				nextWord.InsertCharacter(caret, newCharacter);
+			}
+		}
+		else {
+			let brokenWord = word.WordBreak(caret);
+			this.words.splice(index + 1, 0, brokenWord);
 			let newWord = new Word([newCharacter]);
 			this.words.splice(index + 1, 0, newWord);
 			newWord.PutCaretAtEnd(caret);
@@ -107,13 +140,31 @@ class Line {
 	}
 
 	LineBreak(caret){
+		if (this.CaretAtStart(caret)){
+			let extractedWords = this.words.splice(0);
+			this.words.push(new Word(null));
+			return new Line(extractedWords);
+		}
+		else if (this.CaretAtEnd(caret)){
+			return new Line(null);
+		}
+
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		let brokenWord = word.WordBreak(caret);
-		this.words.splice(index + 1, 0, brokenWord);
-		let extractedWords = this.words.splice(index + 1);
-		let brokenLine = new Line(extractedWords.length == 0 ? null : extractedWords);
-		return brokenLine;
+		if (word.CaretAtStart(caret)){
+			let extractedWords = this.words.splice(index);
+			return new Line(extractedWords);
+		}
+		else if (word.CaretAtEnd(caret)){
+			let extractedWords = this.words.splice(index+1);
+			return new Line(extractedWords);
+		}
+		else {
+			let brokenWord = word.WordBreak(caret);
+			this.words.splice(index + 1, 0, brokenWord);
+			let extractedWords = this.words.splice(index + 1);
+			return new Line(extractedWords);
+		}
 	}
 
 	PutCaretAtStart(caret){
@@ -128,7 +179,7 @@ class Line {
 
 	HandleBackspace(event, caret){
 		if (this.CaretAtStart(caret)){
-			// Caret already at start.  No can do.
+			// Caret already at art.  No can do.
 			return false;
 		}
 
@@ -136,7 +187,8 @@ class Line {
 		let word = this.words[index];
 		if (word.CaretAtStart(caret)){
 			// Caret at start of word so pass to end of previous.
-			word = this.words[index-1];
+			--index;
+			word = this.words[index];
 			word.PutCaretAtEnd(caret);
 		}
 
