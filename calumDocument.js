@@ -29,11 +29,12 @@ class CalumDocument {
 	}
 
 	handleArrow(event){
+		event.preventDefault();
 		if (event.key.includes("Left") || event.key.includes("Right")){
-			return this.caret.HandleArrow(event);
+			return this.content.HandleArrow(event, this.caret);
 		}
 		else {
-			return console.log(event.key, "Not yet handled");
+			return this.display.HandleArrow(event, this.caret);
 		}
 	}
 

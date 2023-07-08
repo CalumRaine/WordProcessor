@@ -27,6 +27,14 @@ class WrappedPage {
 		return this.bodyWidth + this.hMargin + this.hMargin;
 	}
 
+	get LastIndex(){
+		return this.wrappedLines.length - 1;
+	}
+
+	HasCaret(caret){
+		return caret.page == this.contentPage && this.wrappedLines.some(l => l.HasCaret(caret));
+	}
+
 	RenderCursor(caret){
 		return caret.page == this.contentPage && this.wrappedLines.some(l => l.RenderCursor(caret));
 	}
@@ -34,8 +42,8 @@ class WrappedPage {
 	Render(x, y){
 		// draw page
 		this.debugRect(x, y, this.Width, this.Height, "black");
-		this.topLeftX = x;
-		this.topLeftY = y;
+		this.screenX = x;
+		this.screenY = y;
 
 		// draw body
 		x += this.hMargin;
@@ -50,6 +58,20 @@ class WrappedPage {
 			this.debugLine(x, y, wrappedLine.Width, "gray");
 		}
 		return true;
+	}
+
+	Up(caret){
+		let index = this.getCaretIndex(caret);
+		return index == 0 ? false : this.wrappedLines[index-1].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
+	}
+
+	PutCaretAtLast(caret){
+		caret.page = this.contentPage;
+		return this.lines[this.LastIndex].PutCaretAtX(caret, caret.character?.screenX);
+	}
+
+	getCaretIndex(caret){
+		return this.wrappedLines.findIndex(l => l.HasCaret(caret));
 	}
 
 	debugRect(x, y, width, height, color){

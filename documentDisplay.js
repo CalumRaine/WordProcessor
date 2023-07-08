@@ -38,4 +38,28 @@ class DocumentDisplay {
 	RenderCursor(caret){
 		return this.wrappedPages.some(p => p.RenderCursor(caret));
 	}
+
+	HandleArrow(event, caret){
+		return event.key == "ArrowUp" ? this.up(caret) : this.down(caret);
+	}
+
+	up(caret){
+		let index = this.getCaretIndex(caret);
+		let page = this.wrappedPages[index];
+		if (page.Up(caret)){
+			return true;
+		}
+		else if (index == 0){
+			console.log("Ignored.  Already at start of document.");
+			return false;
+		}
+		else {
+			let previousPage = this.pages[index-1];
+			return previousPage.PutCaretOnLast(caret);
+		}
+	}
+
+	getCaretIndex(caret){
+		return this.wrappedPages.findIndex(p => p.HasCaret(caret));
+	}
 }

@@ -13,6 +13,26 @@ class Character {
 		this.dimensions = globalCanvasContext.measureText(this.character);
 	}
 
+	get Width(){
+		return this.dimensions.width;
+	}
+
+	get Ascent(){
+		return this.dimensions.fontBoundingBoxAscent;
+	}
+
+	get Empty(){
+		return this.character == Character.DUMMY;
+	}
+
+	get Text(){
+		return this.character;
+	}
+
+	HasCaret(caret){
+		return caret.character == null || caret.character == this;
+	}
+
 	InitParse(){
 		this.documentX = 0;
 		this.documentY = 0;
@@ -31,22 +51,6 @@ class Character {
 		this.screenY = y;
 	}
 
-	get Width(){
-		return this.dimensions.width;
-	}
-
-	get Ascent(){
-		return this.dimensions.fontBoundingBoxAscent;
-	}
-
-	get Empty(){
-		return this.character == Character.DUMMY;
-	}
-
-	get Text(){
-		return this.character;
-	}
-
 	CaretAtStart(caret){
 		return caret.character == null;
 	}
@@ -57,12 +61,20 @@ class Character {
 		return true;
 	}
 
+	ClaimCaretAtX(caret, x){
+		if (x < this.documentX || x > (this.documentX + this.Width)){
+			return false;
+		}
+		caret.character = this;
+		return true;
+	}
+
 	RenderCursor(caret){
 		if (caret.character == null){
-			return this.drawCursor(this.topLeftX, this.topLeftY);
+			return this.drawCursor(this.screenX, this.screenY);
 		}
 		else if (caret.character == this){
-			return this.drawCursor(this.topLeftX + this.Width, this.topLeftY);
+			return this.drawCursor(this.screenX + this.Width, this.screenY);
 		}
 		else {
 			return false;
