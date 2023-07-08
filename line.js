@@ -186,7 +186,7 @@ class Line {
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
 		if (word.CaretAtStart(caret)){
-			// Caret at start of word so pass to end of previous.
+			// Caret at start of word so backspace from end of previous word instead.
 			--index;
 			word = this.words[index];
 			word.PutCaretAtEnd(caret);
