@@ -2,7 +2,6 @@ class Character {
 	static DUMMY = "";
 	character = "";
 	dimensions = null;
-	caret = null;
 	documentX = 0;
 	documentY = 0;
 	screenX = 0;
@@ -29,8 +28,16 @@ class Character {
 		return this.character;
 	}
 
+	Left(caret){
+		return caret.MoveLeft();
+	}
+
+	Right(caret){
+		return caret.MoveRight();
+	}
+
 	HasCaret(caret){
-		return caret.character == null || caret.character == this;
+		return caret.character == this;
 	}
 
 	InitParse(){
@@ -52,7 +59,7 @@ class Character {
 	}
 
 	CaretAtStart(caret){
-		return caret.character == null;
+		return caret.character == this && caret.OnLeft;
 	}
 
 	Clear(){
@@ -65,19 +72,27 @@ class Character {
 		if (x < this.documentX || x > (this.documentX + this.Width)){
 			return false;
 		}
+
 		caret.character = this;
+		if ((x - this.documentX) < ((this.documentX + this.Width) - x)){
+			caret.MoveLeft();
+		}
+		else {
+			caret.MoveRight();
+		}
+
 		return true;
 	}
 
 	RenderCursor(caret){
-		if (caret.character == null){
+		if (caret.character != this){
+			return false;
+		}
+		else if (caret.OnLeft){
 			return this.drawCursor(this.screenX, this.screenY);
 		}
-		else if (caret.character == this){
-			return this.drawCursor(this.screenX + this.Width, this.screenY);
-		}
 		else {
-			return false;
+			return this.drawCursor(this.screenX + this.Width, this.screenY);
 		}
 	}
 
@@ -95,8 +110,9 @@ class Character {
 		return true;
 	}
 
-	GrabCaret(caret){
+	GrabCaret(caret, side){
 		caret.character = this;
+		caret.Side = side;
 		return true;
 	}
 

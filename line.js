@@ -42,14 +42,14 @@ class Line {
 	}
 
 	get Empty(){
-		return this.words.every(w => w.Empty);
+		return this.words[0].Empty;
 	}
 
 	CaretAtStart(caret){
-		return caret.line == this && this.words[0].CaretAtStart(caret);
+		return caret.OnLeft && caret.line == this && this.words[0].CaretAtStart(caret);
 	}
 
-	AppendWords(newWords){
+	AppendWords(newWords){	// not checked
 		let leftWord = this.words[this.LastIndex];
 		let rightWord = newWords[0];
 		if (leftWord.IsTrueWord == rightWord.IsTrueWord){
@@ -62,7 +62,7 @@ class Line {
 		return true;
 	}
 
-	ParseNext(maxWidth, maxHeight, x, y){
+	ParseNext(maxWidth, maxHeight, x, y){ // not checked
 		// Get the next set of wrapped words that can fit on a line
 		let wrappedWords = [];
 		for (let w = this.parseCursor; w < this.words.length; ++w){
@@ -94,9 +94,12 @@ class Line {
 		if (!word.InsertCharacter(caret, newCharacter)){
 			// Character rejected: Cannot mix whitespace with characters.
 			// Split word and insert new between
-			this.wordBreak(caret);
+			let brokenWord = word.WordBreak(caret);
+			if (!brokenWord.Empty){
+				this.words.splice(index + 1, 0, brokenWord);
+			}
 			let newWord = new Word([newCharacter]);
-			this.insertWordAfter(caret, newWord, index);
+			this.words.splice(index + 1, 0, newWord);
 			newWord.PutCaretAtEnd(caret);
 		}
 		
@@ -106,8 +109,8 @@ class Line {
 	LineBreak(caret){
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		let secondHalfOfWord = word.WordBreak(caret);
-		this.words.splice(index+1, 0, secondHalfOfWord);
+		let brokenWord = word.WordBreak(caret);
+		this.words.splice(index + 1, 0, brokenWord);
 		let extractedWords = this.words.splice(index + 1);
 		let brokenLine = new Line(extractedWords.length == 0 ? null : extractedWords);
 		return brokenLine;
@@ -123,7 +126,7 @@ class Line {
 		return this.words[this.LastIndex].PutCaretAtEnd(caret);
 	}
 
-	Backspace(caret, event){
+	HandleBackspace(event, caret){
 		if (this.CaretAtStart(caret)){
 			// Caret already at start.  No can do.
 			return false;
@@ -131,71 +134,56 @@ class Line {
 
 		let index = this.getCaretIndex(caret);
 		let word = this.words[index];
-		if (!event.ctrlKey && word.BackspaceCharacter(caret) || event.ctrlKey && word.BackspaceWord(caret) || this.Empty){
+		if (word.CaretAtStart(caret)){
+			// Caret at start of word so pass to end of previous.
+			word = this.words[index-1];
+			word.PutCaretAtEnd(caret);
+		}
+
+		if (event.ctrlKey && word.BackspaceWord(caret)){
+			// Try backspace word
 			return true;
 		}
-		else if (word.Empty){
-			// Delete empty word.  There are others on this line.
+		else if (!event.ctrlKey && word.BackspaceCharacter(caret)){
+			// Perhaps we were supposed to backspace character instead
+			return true;
+		}
+		else if (this.Empty){
+			// Backspace was successful.  But line is empty.  Leave as is.
+			return true;
+		}
+
+		// Backspace left an empty word.  Delete it.  We have others.
+		this.words.splice(index, 1);
+		if (index == 0){
+			// Deleted first word.  Pass caret to beginning of next word.
+			return this.words[index].PutCaretAtStart(caret);
+		}
+
+		// Pass caret to end of previous word
+		let previousWord = this.words[index-1];
+		previousWord.PutCaretAtEnd(caret);
+
+		if (index <= this.LastIndex){
+			// Merge with adjacent word
+			let nextWord = this.words[index];
+			previousWord.AppendCharacters(nextWord.Characters);
 			this.words.splice(index, 1);
-			if (index == 0){
-				// Deleted first word.  Pass caret to beginning of next word.
-				return this.words[index].PutCaretAtStart(caret);
-			}
-
-			// Pass caret to end of previous word
-			let previousWord = this.words[index-1];
-			previousWord.PutCaretAtEnd(caret);
-
-			if (index <= this.LastIndex){
-				// Merge with adjacent word
-				let nextWord = this.words[index];
-				previousWord.AppendCharacters(nextWord.Characters);
-				this.words.splice(index, 1);
-			}
-
-			return true;
 		}
-		else if (index > 0) {
-			// Word is not empty but caret is at beginning
-			// Pass caret to end of previous word
-			let previousWord = this.words[index-1];
-			return previousWord.PutCaretAtEnd(caret);
-		}
-		else {
-			// Caret at beginning of line
-			return true;
-		}
-	}
 
-	getCaretIndex(caret){
-		return this.words.findIndex(w => w == caret.word);
-	}
-
-	wordBreak(caret){
-		let index = this.getCaretIndex(caret);
-		let word = this.words[index];
-		let newWord = word.WordBreak(caret);
-		return newWord.Empty ? true : this.insertWordAfter(caret, newWord, index);
-	}
-
-	insertWordAfter(caret, newWord, index){
-		this.words.splice(index + 1, 0, newWord);
 		return true;
 	}
 
 	Left(caret){
 		let index = this.getCaretIndex(caret);
-		if (index == Caret.START){
-			return false;
-		}
-
 		let word = this.words[index];
 		if (word.Left(caret)){
 			return true;
 		}
 		else if (index > 0){
 			let previousWord = this.words[index-1];
-			return previousWord.PutCaretAtEnd(caret);
+			previousWord.PutCaretAtLast(caret);
+			return true;
 		}
 		else {
 			return false;
@@ -208,12 +196,17 @@ class Line {
 		if (word.Right(caret)){
 			return true;
 		}
-		else if (index == this.LastIndex){
-			return false;
+		else if (index < this.LastIndex) {
+			let nextWord = this.words[index+1];
+			nextWord.PutCaretAtFirst(caret);
+			return true;
 		}
 		else {
-			let nextWord = this.words[index+1];
-			return nextWord.PutCaretAtStart(caret);
+			return false;
 		}
+	}
+
+	getCaretIndex(caret){
+		return this.words.findIndex(w => w == caret.word);
 	}
 }

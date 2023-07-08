@@ -8,7 +8,7 @@ class Word {
 	}
 
 	get Empty(){
-		return this.characters.every(c => c.Empty);
+		return this.characters[0].Empty;
 	}
 
 	InitParse(){
@@ -30,7 +30,7 @@ class Word {
 	}
 
 	get IsTrueWord(){
-		return this.characters.some(c => c.IsWordCharacter);
+		return this.characters[0].IsWordCharacter;
 	}
 
 	get Width(){
@@ -46,69 +46,119 @@ class Word {
 	}
 
 	CaretAtStart(caret){
-		return caret.word == this && this.characters[0].CaretAtStart(caret);
+		return caret.OnLeft && caret.word == this && this.characters[0].CaretAtStart(caret);
 	}
 
 	PutCaretAtStart(caret){
 		caret.word = this;
-		caret.character = null;
+		this.characters[0].GrabCaret(caret, Caret.LEFT);
+		return true;
+	}
+
+	PutCaretAtFirst(caret){
+		caret.word = this;
+		this.characters[0].GrabCaret(caret, Caret.RIGHT);
 		return true;
 	}
 
 	PutCaretAtEnd(caret){
 		caret.word = this;
-		return this.characters[this.LastIndex].GrabCaret(caret);
+		return this.characters[this.LastIndex].GrabCaret(caret, Caret.RIGHT);
+	}
+
+	PutCaretAtLast(caret, side){
+		caret.word = this;
+		return this.characters[this.LastIndex].GrabCaret(caret, Caret.LEFT);
 	}
 
 	InsertCharacter(caret, newCharacter){
 		if (this.Empty){
 			let character = this.characters[0];
 			character.Replace(newCharacter);
-			character.GrabCaret(caret);
+			character.GrabCaret(caret, Caret.RIGHT);
 			return true;
 		}
 		else if (newCharacter.IsWordCharacter != this.IsTrueWord){
 			// Refuse to mix non-word characters with true word characters
 			return false;
 		}
+		else if (caret.OnLeft){
+			let index = this.getCaretIndex(caret);
+			this.characters.splice(index, 0, newCharacter);
+			return true;
+		}
 		else {
 			let index = this.getCaretIndex(caret);
 			this.characters.splice(index + 1, 0, newCharacter);
-			newCharacter.GrabCaret(caret);
+			newCharacter.GrabCaret(caret, Caret.RIGHT);
 			return true;
 		}
 	}
 
 	BackspaceCharacter(caret){
-		// Return false if already empty or caret now at start of word
+		// Return false if empty after backspace
 		let index = this.getCaretIndex(caret);
-		let character = this.characters[index];
-		if (this.characters.length == 1){
-			// Don't leave yourself empty
-			character.Clear();
-		}
-		else {
-			// Remove character
-			this.characters.splice(index, 1);
-		}
-
-		if (index == 0){
-			// Inform parent line that caret now precedes word
-			caret.character = null;
+		if (index == 0 && caret.OnLeft){
+			// Caret on left of first character.  No can do.
+			// This should be impossible because parent Line supposed to precheck.
 			return false;
 		}
-		else {
-			let previousCharacter = this.characters[index-1];
-			return previousCharacter.GrabCaret(caret);
+		else if (this.characters.length == 1 && caret.OnRight){
+			// Don't leave yourself empty
+			let character = this.characters[0];
+			character.Clear();
+			character.GrabCaret(caret, Caret.LEFT);
+			return false;
 		}
+		
+		let character = this.characters[index];
+		if (caret.OnRight){
+			this.characters.splice(index, 1);
+			if (this.Empty){
+				return false;
+			}
+			else if (index > this.LastIndex){
+				let previousCharacter = this.characters[index-1];
+				previousCharacter.GrabCaret(caret, Caret.RIGHT);
+			}
+			else {
+				let nextCharacter = this.characters[index];
+				nextCharacter.GrabCaret(caret, Caret.LEFT);
+			}
+		}
+		else {
+			this.characters.splice(index-1, 1);
+		}
+
+		return true;
 	}
 
 	BackspaceWord(caret){
 		let index = this.getCaretIndex(caret);
-		let toDelete = index + 1;
-		this.characters.splice(0, toDelete);
-		caret.character = null;
-		return false;
+		if (index == 0 && caret.OnLeft){
+			// Caret on left of first character.  No can do.
+			// Should be impossible because parent Line supposed to precheck.
+			return false;
+		}
+		else if (caret.OnLeft){
+			// Delete characters prior to this one
+			this.characters.splice(0, index);
+		}
+		else if (index == this.LastIndex){
+			// Delete entire word
+			this.characters.splice(1);
+			let firstCharacter = this.characters[0];
+			firstCharacter.Clear();
+			firstCharacter.GrabCaret(caret, Caret.LEFT);
+		}
+		else {
+			// Delete characters up to and including this one
+			let toDelete = index + 1;
+			this.characters.splice(0, toDelete);
+			this.character[0].GrabCaret(Caret.LEFT);
+		}
+
+		return true;
 	}
 
 	AppendCharacters(newCharacters){
@@ -118,21 +168,34 @@ class Word {
 
 	Left(caret){
 		let index = this.getCaretIndex(caret);
-		if (index == Caret.START){
-			return false;
+		let character = this.characters[index];
+		if (character.Left(caret)){
+			return true;
 		}
-		else if (index == 0){
-			caret.character = null;
+		else if (index > 0) {
+			let previousCharacter = this.characters[index-1];
+			previousCharacter.GrabCaret(caret, Caret.LEFT);
 			return true;
 		}
 		else {
-			return this.characters[index-1].GrabCaret(caret);
+			return false;
 		}
 	}
 
 	Right(caret){
 		let index = this.getCaretIndex(caret);
-		return index == this.LastIndex ? false : this.characters[index+1].GrabCaret(caret);
+		let character = this.characters[index];
+		if (character.Right(caret)){
+			return true;
+		}
+		else if (index < this.LastIndex) {
+			let nextCharacter = this.characters[index+1];
+			nextCharacter.GrabCaret(caret, Caret.RIGHT);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	WordBreak(caret){
@@ -141,10 +204,16 @@ class Word {
 		}
 
 		let index = this.getCaretIndex(caret);
-		let toExtract = this.LastIndex - index;
-		let extractedCharacters = this.characters.splice(index + 1, toExtract);
-		let brokenWord = new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
-		return brokenWord;
+		if (caret.OnRight){
+			let toExtract = this.LastIndex - index;
+			let extractedCharacters = this.characters.splice(index + 1, toExtract);
+			return new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
+		}
+		else {
+			let toExtract = this.characters.length - index;
+			let extractedCharacters = this.characters.splice(index, toExtract);
+			return new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
+		}
 	}
 
 	ParseNext(maxWidth, maxHeight, x, y, forceBreak){

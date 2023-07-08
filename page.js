@@ -10,12 +10,6 @@ class Page {
 		this.lines = lines == null ? [new Line()] : lines;
 	}
 
-	InitParse(){
-		this.parseCursor = 0;
-		this.lines.forEach(l => l.InitParse());
-		return true;
-	}
-
 	get Parsed(){
 		return this.parseCursor == this.lines.length;
 	}
@@ -42,6 +36,16 @@ class Page {
 
 	get LastIndex(){
 		return this.lines.length - 1;
+	}
+
+	InitParse(){
+		this.parseCursor = 0;
+		this.lines.forEach(l => l.InitParse());
+		return true;
+	}
+
+	CaretAtStart(caret){
+		return caret.OnLeft && caret.page == this && this.lines[0].CaretAtStart(caret);
 	}
 
 	PutCaretAtStart(caret){
@@ -84,21 +88,14 @@ class Page {
 	}
 
 	Backspace(caret, event){
-		if (this.Empty){
-			// No lines to backspace
-			// Tell parent to delete
+		if (this.CaretAtStart(caret)){
+			// Caret already at start of page.  No can do.
 			return false;
 		}
 
 		let index = this.getCaretIndex(caret);
-		if (index == Caret.START){
-			// Caret already at beginning
-			// Tell parent to delete and concatenate with previous page
-			return false;
-		}
-
 		let line = this.lines[index];
-		if (line.Backspace(caret, event) || this.Empty){
+		if (line.HandleBackspace(event, caret)){
 			return true;
 		}
 		else if (line.Empty){
@@ -106,7 +103,8 @@ class Page {
 			// If first line, pass caret to start of next line.
 			// Else pass caret to end of previous line.
 			this.lines.splice(index, 1);
-			return index == 0 ? this.lines[index].PutCaretAtStart(caret) : this.lines[index-1].PutCaretAtEnd(caret);
+			this.lines[index-1].PutCaretAtEnd(caret);
+			return true;
 		}
 		else if (index > 0){
 			// Concatenate line with previous
@@ -118,7 +116,6 @@ class Page {
 		}
 
 		// No previous line.  Request page concatenation.
-		caret.line = null;
 		return false;
 	}
 
@@ -137,12 +134,13 @@ class Page {
 		if (line.Left(caret)){
 			return true;
 		}
-		else if (index == 0){
-			return false;
+		else if (index > 0) {
+			let previousLine = this.lines[index-1];
+			previousLine.PutCaretAtEnd(caret);
+			return true;
 		}
 		else {
-			let previousLine = this.lines[index-1];
-			return previousLine.PutCaretAtEnd(caret);
+			return false;
 		}
 	}
 
@@ -152,12 +150,13 @@ class Page {
 		if (line.Right(caret)){
 			return true;
 		}
-		else if (index == this.LastIndex){
-			return false;
+		else if (index < this.LastIndex) {
+			let nextLine = this.lines[index+1];
+			nextLine.PutCaretAtStart(caret);
+			return true;
 		}
 		else {
-			let nextLine = this.lines[index+1];
-			return nextLine.PutCaretAtStart(caret);
+			return false;
 		}
 	}
 
