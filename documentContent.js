@@ -45,9 +45,8 @@ class DocumentContent {
 		}
 
 		let index = this.getCaretIndex(caret);
-		console.log(this.pages.length, index);
 		let page = this.pages[index];
-		if (page.Backspace(caret, event) || this.Empty){
+		if (page.HandleBackspace(event, caret) || this.Empty){
 			return true;
 		}
 		else if (index > 0) {
