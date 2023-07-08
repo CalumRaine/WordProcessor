@@ -179,7 +179,7 @@ class Line {
 
 	HandleBackspace(event, caret){
 		if (this.CaretAtStart(caret)){
-			// Caret already at art.  No can do.
+			// Caret already at start.  No can do.
 			return false;
 		}
 

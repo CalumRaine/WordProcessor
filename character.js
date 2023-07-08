@@ -51,11 +51,13 @@ class Character {
 	Parse(x, y){
 		this.documentX = x;
 		this.documentY = y;
+		return true;
 	}
 
 	Render(x, y){
 		this.screenX = x;
 		this.screenY = y;
+		return true;
 	}
 
 	CaretAtStart(caret){
