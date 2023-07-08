@@ -231,7 +231,7 @@ class Word {
 
 	ParseNext(maxWidth, maxHeight, x, y, forceBreak){
 		// Get the next set of characters that can fit on a line
-		if (this.Width <= maxWidth){
+		if (this.Width <= maxWidth && this.Ascent <= maxHeight){
 			// Word fits on page
 			this.characters.forEach(c => { c.Parse(x, y); x += c.Width; });
 			this.parseCursor = this.characters.length;

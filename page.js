@@ -77,6 +77,7 @@ class Page {
 					y += wrappedLine.Ascent;
 					y += this.lineGap;
 					maxHeight -= wrappedLine.Ascent;
+					maxHeight -= this.lineGap;
 				}
 			} while (!lineToParse.Parsed);
 			
