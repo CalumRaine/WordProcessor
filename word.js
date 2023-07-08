@@ -46,7 +46,11 @@ class Word {
 	}
 
 	CaretAtStart(caret){
-		return caret.OnLeft && caret.word == this && this.characters[0].CaretAtStart(caret);
+		return caret.word == this && this.characters[0].CaretAtStart(caret);
+	}
+
+	CaretAtEnd(caret){
+		return caret.word == this && this.characters[this.LastIndex].CaretAtEnd(caret);
 	}
 
 	PutCaretAtStart(caret){
