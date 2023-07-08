@@ -62,6 +62,10 @@ class Character {
 		return caret.character == this && caret.OnLeft;
 	}
 
+	CaretAtEnd(caret){
+		return caret.character == this && caret.OnRight;
+	}
+
 	Clear(){
 		this.character = Character.DUMMY;
 		this.dimensions = globalCanvasContext.measureText(this.character);

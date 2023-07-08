@@ -20,6 +20,10 @@ class Caret {
 		return !this.rightSide;
 	}
 
+	get DocumentX(){
+		return this.rightSide ? (this.character.documentX + this.character.Width) : this.character.documentX;
+	}
+
 	set Side(value){
 		if (value == Caret.RIGHT){
 			this.rightSide = true;
