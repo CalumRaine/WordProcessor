@@ -62,12 +62,12 @@ class WrappedPage {
 
 	Up(caret){
 		let index = this.getCaretIndex(caret);
-		return index == 0 ? false : this.wrappedLines[index-1].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
+		return index == 0 ? false : this.wrappedLines[index-1].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	Down(caret){
 		let index = this.getCaretIndex(caret);
-		return index == this.LastIndex ? false : this.wrappedLines[index+1].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
+		return index == this.LastIndex ? false : this.wrappedLines[index+1].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	PutCaretOnFirst(caret){
