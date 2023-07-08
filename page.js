@@ -126,7 +126,7 @@ class Page {
 	}
 
 	AppendLines(newLines){
-		this.lines.concat(newLines);
+		this.lines = this.lines.concat(newLines);
 		return true;
 	}
 
@@ -169,11 +169,14 @@ class Page {
 	}
 
 	PageBreak(caret){
-		this.LineBreak(caret);
 		let index = this.getCaretIndex(caret);
+		let line = this.lines[index];
+		let brokenLine = line.LineBreak(caret);
+		brokenLine.PutCaretAtStart(caret);
+		this.lines.splice(index+1, 0, brokenLine);
 		let toExtract = this.LastIndex - index;
-		let extractedLines = this.lines.splice(index, toExtract);
-		let newPage = new Page(extractedLines);
+		let extractedLines = this.lines.splice(index + 1, toExtract);
+		let newPage = new Page(extractedLines.length == 0 ? null : extractedLines);
 		return newPage;
 	}
 

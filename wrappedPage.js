@@ -70,14 +70,14 @@ class WrappedPage {
 		return index == this.LastIndex ? false : this.wrappedLines[index+1].PutCaretAtX(caret, caret.DocumentX);
 	}
 
-	PutCaretOnFirst(caret){
+	PutCaretAtFirstX(caret){
 		caret.page = this.contentPage;
-		return this.lines[0].PutCaretAtX(caret, caret.character?.documentX + caret.character?.Width);
+		return this.wrappedLines[0].PutCaretAtX(caret, caret.DocumentX);
 	}
 
-	PutCaretOnLast(caret){
+	PutCaretAtLastX(caret){
 		caret.page = this.contentPage;
-		return this.lines[this.LastIndex].PutCaretAtX(caret, caret.character?.documentX + caret.caret.character?.Width);
+		return this.wrappedLines[this.LastIndex].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	getCaretIndex(caret){

@@ -53,13 +53,14 @@ class DocumentDisplay {
 		if (page.Up(caret)){
 			return true;
 		}
-		else if (index == 0){
-			console.log("Ignored.  Already at start of document.");
-			return false;
+		else if (index > 0){
+			--index;
+			let previousPage = this.wrappedPages[index];
+			return previousPage.PutCaretAtLastX(caret);
 		}
 		else {
-			let previousPage = this.pages[index-1];
-			return previousPage.PutCaretOnLast(caret);
+			console.log("Ignored.  Already at start of document.");
+			return false;
 		}
 	}
 
@@ -69,13 +70,14 @@ class DocumentDisplay {
 		if (page.Down(caret)){
 			return true;
 		}
-		else if (index == this.LastIndex){
-			console.log("Ignored.  Already at end of document.");
-			return false;
+		else if (index < this.LastIndex){
+			++index;
+			let nextPage = this.wrappedPages[index];
+			return nextPage.PutCaretAtFirstX(caret);
 		}
 		else {
-			let nextPage = this.pages[index+1];
-			return nextPage.PutCaretOnFirst(caret);
+			console.log("Ignored.  Already at end of document.");
+			return false;
 		}
 	}
 

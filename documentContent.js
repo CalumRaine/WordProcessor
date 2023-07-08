@@ -68,13 +68,14 @@ class DocumentContent {
 		let index = this.getCaretIndex(caret);
 		let page = this.pages[index];
 		let brokenPage = page.PageBreak(caret);
-		this.insertPageAfter(brokenPage, index);
+		this.pages.splice(index + 1, 0, brokenPage);
+		brokenPage.PutCaretAtStart(caret);
 		return true;
 	}
 
 	Up(caret){
 		let index = this.getCaretIndex(caret);
-		let page = this.pages[idex];
+		let page = this.pages[index];
 		return page.PutCaretAt(caret) ? true : this.pages[index-1].PutCaretAt(caret)
 	}
 
