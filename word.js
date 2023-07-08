@@ -147,6 +147,7 @@ class Word {
 		else if (caret.OnLeft){
 			// Delete characters prior to this one
 			this.characters.splice(0, index);
+			return true;
 		}
 		else if (index == this.LastIndex){
 			// Delete entire word
@@ -154,15 +155,15 @@ class Word {
 			let firstCharacter = this.characters[0];
 			firstCharacter.Clear();
 			firstCharacter.GrabCaret(caret, Caret.LEFT);
+			return false;
 		}
 		else {
 			// Delete characters up to and including this one
 			let toDelete = index + 1;
 			this.characters.splice(0, toDelete);
-			this.character[0].GrabCaret(Caret.LEFT);
+			this.characters[0].GrabCaret(caret, Caret.LEFT);
+			return true;
 		}
-
-		return true;
 	}
 
 	AppendCharacters(newCharacters){
