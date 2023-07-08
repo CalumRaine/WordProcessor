@@ -126,7 +126,17 @@ class Page {
 	}
 
 	AppendLines(newLines){
-		this.lines = this.lines.concat(newLines);
+		let leftLine = this.lines[this.LastIndex];
+		let rightLine = newLines[0];
+		newLines.splice(0,1);
+		if (!rightLine.Empty){
+			leftLine.AppendWords(rightLine.Words);
+		}
+
+		if (newLines.length > 0){
+			this.lines = this.lines.concat(newLines);
+		}
+
 		return true;
 	}
 
