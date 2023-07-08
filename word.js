@@ -47,14 +47,15 @@ class Word {
 		return caret.word == this && this.characters[0].CaretAtStart(caret);
 	}
 
-	GrabCaret(caret, toEnd){
+	PutCaretAtStart(caret){
 		caret.word = this;
-		if (toEnd){
-			return this.characters[this.LastIndex].GrabCaret(caret);
-		}
-
 		caret.character = null;
 		return true;
+	}
+
+	PutCaretAtEnd(caret){
+		caret.word = this;
+		return this.characters[this.LastIndex].GrabCaret(caret);
 	}
 
 	InsertCharacter(caret, newCharacter){

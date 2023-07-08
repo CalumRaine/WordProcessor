@@ -30,8 +30,12 @@ class DocumentContent {
 		return this.pages.length - 1;
 	}
 
-	GrabCaret(caret, toEnd){
-		return this.pages[toEnd ? this.LastIndex : 0].GrabCaret(caret, toEnd);
+	PutCaretAtStart(caret){
+		return this.pages[0].PutCaretAtStart(caret);
+	}
+
+	PutCaretAtEnd(caret){
+		return this.pages[this.LastIndex].PutCaretAtEnd(caret);
 	}
 
 	HandleBackspace(event, caret){
@@ -48,7 +52,7 @@ class DocumentContent {
 		}
 		else if (index > 0) {
 			let previousPage = this.pages[index-1];
-			previousPage.GrabCaret(caret, true);
+			previousPage.PutCaretAtEnd(caret);
 			previousPage.AppendLines(page.Lines);
 			this.pages.splice(index, 1);
 			return true;
@@ -63,6 +67,12 @@ class DocumentContent {
 		let brokenPage = page.PageBreak(caret);
 		this.insertPageAfter(brokenPage, index);
 		return true;
+	}
+
+	Up(caret){
+		let index = this.getCaretIndex(caret);
+		let page = this.pages[idex];
+		return page.PutCaretAt(caret) ? true : this.pages[index-1].PutCaretAt(caret)
 	}
 
 	getCaretIndex(caret){

@@ -7,7 +7,7 @@ class CalumDocument {
 	caret = new Caret();
 
 	constructor(){
-		this.content.GrabCaret(this.caret, false);
+		this.content.PutCaretAtStart(this.caret);
 		document.addEventListener("keydown", (event) => this.handleKey(event));
 	}
 

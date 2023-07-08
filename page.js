@@ -42,9 +42,14 @@ class Page {
 		return this.lines.length - 1;
 	}
 
-	GrabCaret(caret, toEnd){
+	PutCaretAtStart(caret){
 		caret.page = this;
-		return this.lines[toEnd ? this.LastIndex : 0].GrabCaret(caret, toEnd);
+		return this.lines[0].PutCaretAtStart(caret);
+	}
+
+	PutCaretAtEnd(caret){
+		caret.page = this;
+		return this.lines[this.LastIndex].PutCaretAtEnd(caret);
 	}
 
 	ParseNext(){
@@ -97,12 +102,12 @@ class Page {
 			// If first line, pass caret to start of next line.
 			// Else pass caret to end of previous line.
 			this.lines.splice(index, 1);
-			return index == 0 ? this.lines[index].GrabCaret(caret, false) : this.lines[index-1].GrabCaret(caret, true);
+			return index == 0 ? this.lines[index].PutCaretAtStart(caret) : this.lines[index-1].PutCaretAtEnd(caret);
 		}
 		else if (index > 0){
 			// Concatenate line with previous
 			let previousLine = this.lines[index-1];
-			previousLine.GrabCaret(caret, true);
+			previousLine.PutCaretAtEnd(caret);
 			previousLine.AppendWords(line.Words);
 			this.lines.splice(index, 1);
 			return true;
@@ -133,7 +138,7 @@ class Page {
 		}
 		else {
 			let previousLine = this.lines[index-1];
-			return previousLine.GrabCaret(caret, true);
+			return previousLine.PutCaretAtEnd(caret);
 		}
 	}
 
@@ -148,7 +153,7 @@ class Page {
 		}
 		else {
 			let nextLine = this.lines[index+1];
-			return nextLine.GrabCaret(caret, false);
+			return nextLine.PutCaretAtStart(caret);
 		}
 	}
 
@@ -165,7 +170,7 @@ class Page {
 		let index = this.getCaretIndex(caret);
 		let brokenLine = this.lines[index].LineBreak(caret);
 		this.lines.splice(index + 1, 0, brokenLine);
-		brokenLine.GrabCaret(caret, false);
+		brokenLine.PutCaretAtStart(caret);
 		return true;
 	}
 }
