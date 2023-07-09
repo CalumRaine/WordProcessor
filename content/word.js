@@ -37,8 +37,8 @@ class Word {
 		return this.characters.reduce((sum, character) => sum + character.Width, 0);
 	}
 
-	get Ascent(){
-		return Math.max(...this.characters.map(c => c.Ascent));
+	get Height(){
+		return Math.max(...this.characters.map(c => c.Height));
 	}
 
 	get LastIndex(){
@@ -231,13 +231,13 @@ class Word {
 
 	ParseNext(maxWidth, maxHeight, x, y, forceBreak){
 		// Get the next set of characters that can fit on a line
-		if (this.Width <= maxWidth && this.Ascent <= maxHeight){
+		if (this.Width <= maxWidth && this.Height <= maxHeight){
 			// Word fits on page
 			this.characters.forEach(c => { c.Parse(x, y); x += c.Width; });
 			this.parseCursor = this.characters.length;
 			return this.characters;
 		}
-		else if (this.Ascent > maxHeight){
+		else if (this.Height > maxHeight){
 			// This word won't fit on the page
 			return null;
 		}
@@ -256,7 +256,7 @@ class Word {
 		let wrappedCharacters = [];
 		for (let c = this.parseCursor; c < this.characters.length; ++c){
 			let wrappedCharacter = this.characters[c];
-			if (wrappedCharacter.Ascent > maxHeight || wrappedCharacter.Width > maxWidth){
+			if (wrappedCharacter.Height > maxHeight || wrappedCharacter.Width > maxWidth){
 				return wrappedCharacters.length == 0 ? null : wrappedCharacters;
 			}
 			wrappedCharacter.Parse(x, y);

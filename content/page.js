@@ -74,9 +74,9 @@ class Page {
 				else {
 					let wrappedLine = new WrappedLine(lineToParse, wrappedWords, x, y);
 					wrappedLines.push(wrappedLine);
-					y += wrappedLine.Ascent;
+					y += wrappedLine.Height;
 					y += this.lineGap;
-					maxHeight -= wrappedLine.Ascent;
+					maxHeight -= wrappedLine.Height;
 					maxHeight -= this.lineGap;
 				}
 			} while (!lineToParse.Parsed);

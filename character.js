@@ -21,7 +21,7 @@ class Character {
 		return this.dimensions.width;
 	}
 
-	get Ascent(){
+	get Height(){
 		return this.style.size;
 	}
 

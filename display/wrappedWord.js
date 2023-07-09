@@ -18,8 +18,8 @@ class WrappedWord {
 		return this.wrappedCharacters.reduce((sum, character) => sum + character.Width, 0);
 	}
 
-	get Ascent(){
-		return Math.max(...this.wrappedCharacters.map(c => c.Ascent));
+	get Height(){
+		return Math.max(...this.wrappedCharacters.map(c => c.Height));
 	}
 
 	get Empty(){
@@ -77,7 +77,7 @@ class WrappedWord {
 	drawCursor(){
 		globalCanvasContext.beginPath();
 		globalCanvasContext.moveTo(this.screenX, this.screenY);
-		globalCanvasContext.lineTo(this.screenX + this.Ascent);
+		globalCanvasContext.lineTo(this.screenX + this.Height);
 		globalCanvasContext.stroke();
 		return true;
 	}

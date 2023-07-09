@@ -18,8 +18,8 @@ class WrappedLine {
 		return this.wrappedWords.reduce((sum, word) => sum + word.Width, 0);
 	}
 
-	get Ascent(){
-		return Math.max(...this.wrappedWords.map(w => w.Ascent));
+	get Height(){
+		return Math.max(this.contentLine.style.Height, ...this.wrappedWords.map(w => w.Height));
 	}
 
 	get LastIndex(){

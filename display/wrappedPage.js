@@ -51,7 +51,7 @@ class WrappedPage {
 		//this.debugRect(x, y, this.bodyWidth, this.bodyHeight, "gray");
 
 		for (let wrappedLine of this.wrappedLines){
-			y += wrappedLine.Ascent;
+			y += wrappedLine.Height;
 			//this.debugLine(x, y, wrappedLine.Width, "gray");
 			wrappedLine.Render(x, y);
 			y += this.lineGap;

@@ -1,6 +1,7 @@
 // Content element (p, ul, ol, etc)
 class Line {
 	words = [];
+	style = new ElementStyle();
 	parseCursor = 0;
 
 	constructor(words){
@@ -21,8 +22,8 @@ class Line {
 		return this.words;
 	}
 
-	get Ascent(){
-		return Math.max(...this.words.map(w => w.Ascent));
+	get Height(){
+		return Math.max(this.style.Height, ...this.words.map(w => w.Height));
 	}
 
 	get Characters(){
