@@ -6,9 +6,14 @@ class Character {
 	documentY = 0;
 	screenX = 0;
 	screenY = 0;
+	style = new FontStyle();
 	
-	constructor(character){
+	constructor(character, style){
 		this.character = character == null ? Character.DUMMY : character;
+		if (style != null){
+			this.style = style;
+			globalCanvasContext.font = this.style.Font;
+		}
 		this.dimensions = globalCanvasContext.measureText(this.character);
 	}
 
@@ -17,7 +22,7 @@ class Character {
 	}
 
 	get Ascent(){
-		return this.dimensions.fontBoundingBoxAscent;
+		return this.style.size;//dimensions.fontBoundingBoxAscent;
 	}
 
 	get Empty(){
