@@ -5,3 +5,15 @@ body {
 canvas {
 	border: 1px solid black;
 }
+
+button.toggle-button {
+	font-size: 1rem;
+	background-color: lightgray;
+	color: black;
+	height: 1.5rem;
+}
+
+button.toggle-button.toggle-on {
+	background-color: black;
+	color: white;
+}
