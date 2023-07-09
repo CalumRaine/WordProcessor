@@ -4,7 +4,6 @@
 	<link rel="stylesheet" href="styles.css"/>
 	<script src="./calumDocument.js"></script>
 	<script src="./caret.js"></script>
-	<script src="./fontStyle.js"></script>
 
 	<script src="./documentContent.js"></script>
 	<script src="./page.js"></script>
@@ -17,24 +16,16 @@
 	<script src="./wrappedLine.js"></script>
 
 	<script src="./character.js"></script>
+
+	<script src="./palette/fontStyle.js"></script>
+	<script src="./palette/fontToggle.js"></script>
+	<script src="./palette/fontSelector.js"></script>
+	<script src="./palette/fontSize.js"></script>
+	<script src="./palette/fontColor.js"></script>
+	<script src="./palette/stylePalette.js"></script>
 </head>
 <body>
-	<div>
-		<select onchange="calumDocument.caret.style.Family = this.value">
-			<option selected style="font-family:Arial">Arial</option>
-			<option style="font-family:Verdana">Verdana</option>
-			<option style="font-family:Tahoma">Tahoma</option>
-			<option style="font-family:Trebuchet">Trebuchet</option>
-			<option style="font-family:'Times New Roman'">Times New Roman</option>
-			<option style="font-family:Georgia">Georgia</option>
-			<option style="font-family:Garamond">Garamond</option>
-			<option style="font-family:'Courier New'">Courier New</option>
-			<option style="font-family:'Brush Script MT'">Brush Script MT</option>
-		</select>
-		<button class="toggle-button" onclick="this.classList.toggle('toggle-on'); calumDocument.caret.style.ToggleBold()">B</button>
-		<button class="toggle-button" style="font-style:italic;font-family:'Brush Script MT'" onclick="this.classList.toggle('toggle-on'); calumDocument.caret.style.ToggleItalic()">I</button>
-	</div>
-
+	<div is="style-palette"></div>
 	<canvas></canvas>
 	<script>
 		var canvas = document.querySelector("canvas");

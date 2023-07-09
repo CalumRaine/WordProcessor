@@ -12,7 +12,7 @@ class Character {
 		this.character = character == null ? Character.DUMMY : character;
 		if (style != null){
 			this.style = style;
-			globalCanvasContext.font = this.style.Font;
+			globalCanvasContext.font = this.style.CssFont;
 		}
 		this.dimensions = globalCanvasContext.measureText(this.character);
 	}
