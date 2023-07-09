@@ -22,18 +22,36 @@ class FontStyle {
 		return this.color;
 	}
 
-	Bold(){
+	get IsBold(){
+		return this.weight == "bold";
+	}
+
+	get IsItalic(){
+		return this.variant == "italic";
+	}
+
+	get Size(){
+		return this.size;
+	}
+
+	ToggleBold(){
 		this.weight = this.weight == "bold" ? "" : "bold";
 		return true;
 	}
 
-	Italic(){
+	ToggleItalic(){
 		this.variant = this.variant == "italic" ? "" : "italic";
 		return true;
 	}
 
-	Size(value){
-		return this.size += (5 * value);
+	Inc(value){
+		this.size += 5;
+		return true;
+	}
+
+	Dec(value){
+		this.size -= 5;
+		return true;
 	}
 
 	Clone(){

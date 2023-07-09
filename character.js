@@ -22,7 +22,7 @@ class Character {
 	}
 
 	get Ascent(){
-		return this.style.size;//dimensions.fontBoundingBoxAscent;
+		return this.style.size;
 	}
 
 	get Empty(){
@@ -100,17 +100,18 @@ class Character {
 			return false;
 		}
 		else if (caret.OnLeft){
-			return this.drawCursor(this.screenX, this.screenY);
+			return this.drawCursor(caret, this.screenX, this.screenY);
 		}
 		else {
-			return this.drawCursor(this.screenX + this.Width, this.screenY);
+			return this.drawCursor(caret, this.screenX + this.Width, this.screenY);
 		}
 	}
 
-	drawCursor(x, y){
+	drawCursor(caret, x, y){
 		globalCanvasContext.beginPath();
-		globalCanvasContext.moveTo(x, y - this.Ascent);
-		globalCanvasContext.lineTo(x, y);
+		globalCanvasContext.moveTo(caret.style.IsItalic ? x + 1 : x, y - caret.style.Size);
+		globalCanvasContext.lineTo(caret.style.IsItalic ? x - 1 : x, y);
+		globalCanvasContext.lineWidth = caret.style.IsBold ? 2 : 1;
 		globalCanvasContext.stroke();
 		return true;
 	}

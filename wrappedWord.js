@@ -31,14 +31,11 @@ class WrappedWord {
 	}
 
 	HasCaret(caret){
-		return caret.word == this.contentWord && (caret.character == null || this.wrappedCharacters.some(c => c.HasCaret(caret)));
+		return caret.word == this.contentWord && this.wrappedCharacters.some(c => c.HasCaret(caret));
 	}
 
 	RenderCursor(caret){
-		if (caret.word != null && caret.word != this.contentWord){
-			return false;
-		}
-		return this.wrappedCharacters.some(c => c.RenderCursor(caret));
+		return caret.word == this.contentWord && this.wrappedCharacters.some(c => c.RenderCursor(caret));
 	}
 
 	Render(x, y){

@@ -35,13 +35,13 @@ class CalumDocument {
 		event.preventDefault();
 		switch (event.key){
 			case "b":
-				return this.caret.style.Bold();
+				return this.caret.style.ToggleBold();
 			case "i":
-				return this.caret.style.Italic();
+				return this.caret.style.ToggleItalic();
 			case "=":
-				return this.caret.style.Size(1);
+				return this.caret.style.Inc();
 			case "-":
-				return this.caret.style.Size(-1);
+				return this.caret.style.Dec();
 		}
 	}
 
