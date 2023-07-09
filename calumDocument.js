@@ -22,10 +22,27 @@ class CalumDocument {
 		else if (event.key == "Backspace"){
 			this.content.HandleBackspace(event, this.caret);
 		}
+		else if (event.ctrlKey){
+			this.handleCtrl(event);
+		}
 		else if (!specialKeys.includes(event.key)){
 			this.caret.HandleKey(event);
 		}
 		this.render();
+	}
+
+	handleCtrl(event){
+		event.preventDefault();
+		switch (event.key){
+			case "b":
+				return this.caret.style.Bold();
+			case "i":
+				return this.caret.style.Italic();
+			case "=":
+				return this.caret.style.Size(1);
+			case "-":
+				return this.caret.style.Size(-1);
+		}
 	}
 
 	handleArrow(event){

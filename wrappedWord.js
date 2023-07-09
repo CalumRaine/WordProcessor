@@ -46,6 +46,8 @@ class WrappedWord {
 		this.screenY = y;
 		for (let wrappedCharacter of this.wrappedCharacters){
 			wrappedCharacter.Render(x, y);
+			globalCanvasContext.font = wrappedCharacter.style.Font;
+			globalCanvasContext.fillStyle = wrappedCharacter.style.Fill;
 			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
 			x += wrappedCharacter.Width;
 		}

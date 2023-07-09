@@ -7,6 +7,7 @@ class Caret {
 	word = null;
 	character = null;
 	rightSide = true;
+	style = new FontStyle();
 	
 	constructor(){
 
@@ -53,7 +54,7 @@ class Caret {
 
 	HandleKey(event){
 		event.preventDefault();
-		let character = new Character(event.key);
+		let character = new Character(event.key, this.style.Clone());
 		this.line.InsertCharacter(this, character);
 	}
 
