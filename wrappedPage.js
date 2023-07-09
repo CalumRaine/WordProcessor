@@ -48,14 +48,14 @@ class WrappedPage {
 		// draw body
 		x += this.hMargin;
 		y += this.vMargin;
-		this.debugRect(x, y, this.bodyWidth, this.bodyHeight, "gray");
+		//this.debugRect(x, y, this.bodyWidth, this.bodyHeight, "gray");
 
 		for (let wrappedLine of this.wrappedLines){
 			y += wrappedLine.Ascent;
-			this.debugLine(x, y, wrappedLine.Width, "gray");
+			//this.debugLine(x, y, wrappedLine.Width, "gray");
 			wrappedLine.Render(x, y);
 			y += this.lineGap;
-			this.debugLine(x, y, wrappedLine.Width, "gray");
+			//this.debugLine(x, y, wrappedLine.Width, "gray");
 		}
 		return true;
 	}
@@ -94,6 +94,7 @@ class WrappedPage {
 
 	debugLine(x, y, width, color){
 		globalCanvasContext.strokeStyle = color;
+		globalCanvasContext.lineWidth = 1;
 		globalCanvasContext.beginPath();
 		globalCanvasContext.moveTo(x, y);
 		globalCanvasContext.lineTo(x + width, y);
