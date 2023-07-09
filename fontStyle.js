@@ -34,6 +34,15 @@ class FontStyle {
 		return this.size;
 	}
 
+	set Family(value){
+		this.family = value;
+		return true;
+	}
+
+	get Family(){
+		return this.family;
+	}
+
 	ToggleBold(){
 		this.weight = this.weight == "bold" ? "" : "bold";
 		return true;
@@ -51,6 +60,17 @@ class FontStyle {
 
 	Dec(value){
 		this.size -= 5;
+		return true;
+	}
+
+	set Style(style){
+		this.size = style.size;
+		this.family = style.family;
+		this.variant = style.variant;
+		this.weight = style.weight;
+		this.underline = style.underline;
+		this.stretch = style.stretch;
+		this.color = style.color;
 		return true;
 	}
 

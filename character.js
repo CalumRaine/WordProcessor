@@ -125,6 +125,7 @@ class Character {
 	GrabCaret(caret, side){
 		caret.character = this;
 		caret.Side = side;
+		caret.style.Style = this.style;
 		return true;
 	}
 
