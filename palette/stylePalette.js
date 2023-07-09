@@ -2,8 +2,8 @@ class StylePalette extends HTMLDivElement {
 	family = new FontSelector("Trebuchet");
 	color = new FontColor("black");
 	size = new FontSize(12);
-	bold = new FontToggle("B", "bold", false);
-	italic = new FontToggle("I", "italic", false);
+	bold = new BoldToggle(false);
+	italic = new ItalicToggle(false);
 	
 	constructor(){
 		super();

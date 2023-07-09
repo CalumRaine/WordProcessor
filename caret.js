@@ -10,25 +10,20 @@ class Caret {
 	style = new FontStyle();
 	
 	constructor(){
-		document.addEventListener("FontToggle", (event) => this.HandleFontToggle(event));
+		document.addEventListener("BoldToggle", (event) => this.HandleBoldToggle(event));
+		document.addEventListener("ItalicToggle", (event) => this.HandleItalicToggle(event));
 		document.addEventListener("FontSelector", (event) => this.HandleFontSelector(event));
 		document.addEventListener("FontSize", (event) => this.HandleFontSize(event));
 		document.addEventListener("FontColor", (event) => this.HandleFontColor(event));
 	}
 
-	HandleFontToggle(event){
-		console.log(event.type, event.detail.parameter, event.detail.on);
-		switch (event.detail.parameter){
-			case "bold":
-				this.style.Bold = event.detail.on;
-				break;
-			case "italic":
-				this.style.Italic = event.detail.on;
-				break;
-			default:
-				console.log("Unhandled font toggle");
-				return false;
-		}
+	HandleBoldToggle(event){
+		this.style.Bold = event.detail;
+		return true;
+	}
+
+	HandleItalicToggle(event){
+		this.style.Italic = event.detail;
 		return true;
 	}
 
