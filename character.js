@@ -1,5 +1,4 @@
 class Character {
-	static DUMMY = "";
 	character = "";
 	dimensions = null;
 	documentX = 0;
@@ -9,11 +8,9 @@ class Character {
 	style = new FontStyle();
 	
 	constructor(character, style){
-		this.character = character == null ? Character.DUMMY : character;
-		if (style != null){
-			this.style = style;
-			globalCanvasContext.font = this.style.CssFont;
-		}
+		this.character = character;
+		this.style = style;
+		globalCanvasContext.font = this.style.CssFont;
 		this.dimensions = globalCanvasContext.measureText(this.character);
 	}
 
@@ -25,12 +22,8 @@ class Character {
 		return this.style.size;
 	}
 
-	get Empty(){
-		return this.character == Character.DUMMY;
-	}
-
-	get Text(){
-		return this.character;
+	get Style(){
+		return this.style;
 	}
 
 	Left(caret){
@@ -65,11 +58,11 @@ class Character {
 		return true;
 	}
 
-	CaretAtStart(caret){
+	IsCaretAtStart(caret){
 		return caret.character == this && caret.OnLeft;
 	}
 
-	CaretAtEnd(caret){
+	IsCaretAtEnd(caret){
 		return caret.character == this && caret.OnRight;
 	}
 
