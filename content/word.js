@@ -4,11 +4,11 @@ class Word {
 	parseCursor = 0;
 
 	constructor(characters){
-		this.characters = characters == null ? [new Character()] : characters;
+		this.characters = (characters == null ? [] : characters);
 	}
 
 	get Empty(){
-		return this.characters[0].Empty;
+		return this.characters.length == 0;
 	}
 
 	InitParse(){
@@ -17,16 +17,12 @@ class Word {
 		return true;
 	}
 
-	get Parsed(){
+	get IsParsed(){
 		return this.parseCursor == this.characters.length;
 	}
 
 	get Characters(){
 		return this.characters;
-	}
-
-	get Text(){
-		return this.characters.map(c => c.Text).join("");
 	}
 
 	get IsTrueWord(){
@@ -45,12 +41,16 @@ class Word {
 		return this.characters.length - 1;
 	}
 
-	CaretAtStart(caret){
-		return caret.word == this && (this.Empty || this.characters[0].CaretAtStart(caret));
+	get Style(){
+		return this.characters[0].Style;
 	}
 
-	CaretAtEnd(caret){
-		return caret.word == this && (this.Empty || this.characters[this.LastIndex].CaretAtEnd(caret));
+	IsCaretAtStart(caret){
+		return caret.word == this && this.characters[0].IsCaretAtStart(caret);
+	}
+
+	IsCaretAtEnd(caret){
+		return caret.word == this && this.characters[this.LastIndex].IsCaretAtEnd(caret);
 	}
 
 	PutCaretAtStart(caret){
@@ -76,94 +76,90 @@ class Word {
 	}
 
 	InsertCharacter(caret, newCharacter){
-		if (this.Empty){
-			let character = this.characters[0];
-			character.Replace(newCharacter);
-			character.GrabCaret(caret, Caret.RIGHT);
-			return true;
-		}
-		else if (newCharacter.IsWordCharacter != this.IsTrueWord){
-			// Refuse to mix non-word characters with true word characters
+		// Possibilities:
+		// 	(1) newCharacter is whitespace but this is "true" word.  Reject
+		// 	(2) Caret on right of character.  Insert ahead of it and move caret.
+		// 	(3) Caret on left of character.  Insert behind it.
+
+		if (newCharacter.IsWordCharacter != this.IsTrueWord){
+			// (1)
 			return false;
 		}
-		else if (caret.OnLeft){
-			let index = this.getCaretIndex(caret);
-			this.characters.splice(index, 0, newCharacter);
-			return true;
-		}
-		else {
-			let index = this.getCaretIndex(caret);
-			this.characters.splice(index + 1, 0, newCharacter);
+
+		let index = this.getCaretIndex(caret);
+		if (caret.OnRight){
+			// (2)
+			++index;
 			newCharacter.GrabCaret(caret, Caret.RIGHT);
-			return true;
 		}
+
+		// (3)
+		this.characters.splice(index, 0, newCharacter);
+
+		return true;
 	}
 
 	BackspaceCharacter(caret){
-		// Return false if empty after backspace
+		// Possibilities:
+		// 	(1) Caret on left of first character.  Nothing to backspace.
+		//	(2) Caret on left of character.  Delete previous.
+		//	(3) Caret on right of character.  Delete itself and move caret.
+
+		if (this.IsCaretAtStart(caret)){
+			// (1)
+			return false;
+		}
+
 		let index = this.getCaretIndex(caret);
-		if (index == 0 && caret.OnLeft){
-			// Caret on left of first character.  No can do.
-			// This should be impossible because parent Line supposed to precheck.
-			return false;
+		if (caret.OnLeft){
+			// (2)
+			this.characters.splice(index-1, 1);
 		}
-		else if (this.characters.length == 1 && caret.OnRight){
-			// Don't leave yourself empty
-			let character = this.characters[0];
-			character.Clear();
-			character.GrabCaret(caret, Caret.LEFT);
-			return false;
-		}
-		
-		let character = this.characters[index];
-		if (caret.OnRight){
+		else {
+			// (3)
 			this.characters.splice(index, 1);
-			if (this.Empty){
-				return false;
-			}
-			else if (index > this.LastIndex){
-				let previousCharacter = this.characters[index-1];
-				previousCharacter.GrabCaret(caret, Caret.RIGHT);
-			}
-			else {
+			if (index < this.LastIndex){
 				let nextCharacter = this.characters[index];
 				nextCharacter.GrabCaret(caret, Caret.LEFT);
 			}
-		}
-		else {
-			this.characters.splice(index-1, 1);
+			else if (!this.Empty && index > this.LastIndex){
+				let previousCharacter = this.characters[index-1];
+				previousCharacter.GrabCaret(caret, Caret.RIGHT);
+			}
 		}
 
 		return true;
 	}
 
 	BackspaceWord(caret){
+		// Possibilities:
+		// 	(1) Caret on left of first character.  Nothing to backspace.
+		// 	(2) Caret on left of character.  Delete preceding characters.
+		// 	(3) Caret on right of last character.  Delete prior and itself.
+		// 	(4) Caret on right of character.  Delete prior and itself.  Move caret.
+
+		if (this.IsCaretAtStart(caret)){
+			// (1)
+			return false;
+		}
+
 		let index = this.getCaretIndex(caret);
-		if (index == 0 && caret.OnLeft){
-			// Caret on left of first character.  No can do.
-			// Should be impossible because parent Line supposed to precheck.
-			return false;
-		}
-		else if (caret.OnLeft){
-			// Delete characters prior to this one
+		if (caret.OnLeft){
+			// (2)
 			this.characters.splice(0, index);
-			return true;
 		}
-		else if (index == this.LastIndex){
-			// Delete entire word
-			this.characters.splice(1);
-			let firstCharacter = this.characters[0];
-			firstCharacter.Clear();
-			firstCharacter.GrabCaret(caret, Caret.LEFT);
-			return false;
+		else if (this.IsCaretAtEnd(caret)){
+			// (3)
+			this.characters.splice(0);
 		}
 		else {
-			// Delete characters up to and including this one
+			// (4)
 			let toDelete = index + 1;
 			this.characters.splice(0, toDelete);
 			this.characters[0].GrabCaret(caret, Caret.LEFT);
-			return true;
 		}
+
+		return true;
 	}
 
 	AppendCharacters(newCharacters){
@@ -172,81 +168,106 @@ class Word {
 	}
 
 	LeftCharacter(caret){
-		let index = this.getCaretIndex(caret);
-		let character = this.characters[index];
-		if (character.Left(caret)){
-			return true;
-		}
-		else if (index > 0) {
-			let previousCharacter = this.characters[index-1];
-			previousCharacter.GrabCaret(caret, Caret.LEFT);
-			return true;
-		}
-		else {
+		// Possibilities:
+		// 	(1) Caret at start of word.  Can move no further left.
+		// 	(2) Caret on right of character.  Simply swap sides.
+		// 	(3) Caret on left of character. Move caret to prior character.
+
+		if (this.IsCaretAtStart(caret)){
 			return false;
 		}
+
+		let index = this.getCaretIndex(caret);
+		let character = this.characters[index];
+		if (!character.Left(caret)){	// (2)
+			// (3)
+			let previousCharacter = this.characters[index-1];
+			previousCharacter.GrabCaret(caret, Caret.LEFT);
+		}
+
+		return true;
 	}
 
 	LeftWord(caret){
-		return this.CaretAtStart(caret) ? false : this.PutCaretAtStart(caret);
+		return this.IsCaretAtStart(caret) ? false : this.PutCaretAtStart(caret);
 	}
 
 	RightCharacter(caret){
-		let index = this.getCaretIndex(caret);
-		let character = this.characters[index];
-		if (character.Right(caret)){
-			return true;
-		}
-		else if (index < this.LastIndex) {
-			let nextCharacter = this.characters[index+1];
-			nextCharacter.GrabCaret(caret, Caret.RIGHT);
-			return true;
-		}
-		else {
+		// Possibilities:
+		// 	(1) Caret at end of word.  Can move no further right.
+		// 	(2) Caret on left of character.  Simply swap sides.
+		// 	(3) Caret on right of character.  Move to next character.
+
+		if (this.IsCaretAtEnd(caret)){
 			return false;
 		}
+
+		let index = this.getCaretIndex(caret);
+		let character = this.characters[index];
+		if (!character.Right(caret)){ // (2)
+			// (3)
+			let nextCharacter = this.characters[index+1];
+			nextCharacter.GrabCaret(caret, Caret.RIGHT);
+		}
+
+		return true;
 	}
 
 	RightWord(caret){
-		return this.CaretAtEnd(caret) ? false : this.PutCaretAtEnd(caret);
+		return this.IsCaretAtEnd(caret) ? false : this.PutCaretAtEnd(caret);
 	}
 
 	WordBreak(caret){
-		if (this.Empty){
-			return new Word(null);
-		}
+		// Possibilities:
+		// 	(1) Caret at start of word.  Return the entire word itself.
+		// 	(2) Caret at end of word.  Return blank word.
+		// 	(3) Caret on left of character.  Return up to but excluding the current character.
+		// 	(4) Caret on right of word.  Return up to and including the current character.
 
 		let index = this.getCaretIndex(caret);
+		let extractedCharacters = [];
 		if (caret.OnRight){
+			// (2) and (4)
 			let toExtract = this.LastIndex - index;
-			let extractedCharacters = this.characters.splice(index + 1, toExtract);
-			return new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
+			extractedCharacters = this.characters.splice(index + 1, toExtract);
 		}
 		else {
+			// (1) and (3)
 			let toExtract = this.characters.length - index;
-			let extractedCharacters = this.characters.splice(index, toExtract);
-			return new Word(extractedCharacters.length == 0 ? null : extractedCharacters);
+			extractedCharacters = this.characters.splice(index, toExtract);
 		}
+
+		return new Word(extractedCharacters);
 	}
 
 	ParseNext(maxWidth, maxHeight, x, y, forceBreak){
+		// Possibilities:
+		// 	(1) Entire word fits on page.  Return all characters as parsed.
+		//	(2) Word too tall to fit on page.  Return null.
+		// 	(3) Word too long to fit on one line but can be forced to break 
+		//	(4) Word too long to fit on page but not forced to break
+
 		// Get the next set of characters that can fit on a line
 		if (this.Width <= maxWidth && this.Height <= maxHeight){
-			// Word fits on page
-			this.characters.forEach(c => { c.Parse(x, y); x += c.Width; });
-			this.parseCursor = this.characters.length;
+			// (1)
+			for (let character of this.characters){
+				character.Parse(x, y);
+				x += character.Width;
+				++this.parseCursor;
+			}
+
 			return this.characters;
 		}
 		else if (this.Height > maxHeight){
-			// This word won't fit on the page
+			// (2)
 			return null;
 		}
 		else if (forceBreak){
-			// Word forced to split to fit on line
+			// (3)
 			return this.forceRenderNext(maxWidth, maxHeight, x, y);
 		}
 		else {
-			// Line must break to fit this word
+			// (4)
 			return null;
 		}
 	}
@@ -265,6 +286,7 @@ class Word {
 			maxWidth -= wrappedCharacter.Width;
 			++this.parseCursor;
 		}
+
 		return wrappedCharacters;
 	}
 
