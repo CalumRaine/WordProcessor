@@ -99,7 +99,11 @@ class Caret {
 
 	HandleKey(event){
 		event.preventDefault();
-		let character = new Character(event.key, this.style.Clone());
+		return this.InsertCharacter(event.key);
+	}
+
+	InsertCharacter(key){
+		let character = new Character(key, this.style.Clone());
 		return this.element.InsertCharacter(this, character);
 	}
 
