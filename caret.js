@@ -3,7 +3,7 @@ class Caret {
 	static RIGHT = 1;
 	static LEFT = 2;
 	page = null;
-	line = null;
+	element = null;
 	word = null;
 	character = null;
 	rightSide = true;
@@ -61,6 +61,17 @@ class Caret {
 		}
 	}
 
+	NoWord(style){
+		this.word = null;
+		return this.NoCharacter(style);
+	}
+
+	NoCharacter(style){
+		this.character = null;
+		this.style = style;
+		return true;
+	}
+
 	MoveRight(){
 		if (this.OnRight){
 			return false;
@@ -82,10 +93,10 @@ class Caret {
 	HandleKey(event){
 		event.preventDefault();
 		let character = new Character(event.key, this.style.Clone());
-		this.line.InsertCharacter(this, character);
+		this.element.InsertCharacter(this, character);
 	}
 
 	HandleEnter(){
-		return this.page.LineBreak(this);
+		return this.page.ElementBreak(this);
 	}
 }
