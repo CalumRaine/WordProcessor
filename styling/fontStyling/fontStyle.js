@@ -2,6 +2,7 @@ class FontStyle {
 	family = "Arial";
 	color = "black";
 	size = 12;
+	sizeStep = 5;
 	bold = false;
 	italic = false;
 
@@ -47,6 +48,16 @@ class FontStyle {
 
 	get BoldValue(){
 		return this.bold ? "bold" : "";
+	}
+
+	Inc(){
+		this.size += this.sizeStep;
+		return true;
+	}
+
+	Dec(){
+		this.size = this.size > this.sizeStep ? this.size - this.sizeStep : this.sizeStep;
+		return true;
 	}
 
 	IsBold(){
