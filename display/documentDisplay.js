@@ -23,7 +23,7 @@ class DocumentDisplay {
 				y += wrappedPage.Height;
 				y += this.pageGap;
 				this.wrappedPages.push(wrappedPage);
-			} while (!contentPage.Parsed);
+			} while (!contentPage.IsParsed);
 		}
 	}
 
