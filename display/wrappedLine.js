@@ -60,7 +60,7 @@ class WrappedLine {
 	PutCaretAtX(caret, x){
 		caret.element = this.contentElement;
 		if (x <= this.documentX){
-			return this.wrappedWords[0].PutCaretAtStart(caret);
+			return this.wrappedWords.length == 0 ? this.contentElement.PutCaretAtStart(caret) : this.wrappedWords[0].PutCaretAtStart(caret);
 		}
 		else if (this.wrappedWords.some(w => w.ClaimCaretAtX(caret, x))){
 			return true;
