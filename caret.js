@@ -17,6 +17,10 @@ class Caret {
 		document.addEventListener("FontColor", (event) => this.HandleFontColor(event));
 	}
 
+	get Style(){
+		return this.style;
+	}
+
 	HandleBoldToggle(event){
 		this.style.Bold = event.detail;
 		return true;

@@ -156,7 +156,7 @@ class Element {
 
 		if (this.Empty){
 			// (1)
-			return new Element(null, caret.Style);
+			return new Element(null, caret.Style.Clone());
 		}
 
 		let index = this.getCaretIndex(caret);
@@ -173,7 +173,7 @@ class Element {
 
 		// (3)
 		let extractedWords = this.words.splice(index + 1);
-		return new Element(extractedWords, caret.Style);
+		return new Element(extractedWords, caret.Style.Clone());
 	}
 
 	PutCaretAtStart(caret){
