@@ -129,6 +129,10 @@ class Element {
 			let brokenWord = word.WordBreak(caret);
 			if (!brokenWord.Empty){
 				this.words.splice(index + 1, 0, brokenWord);
+				if (word.Empty){
+					this.words.splice(index, 1);
+					--index;
+				}
 			}
 			let newWord = new Word([newCharacter]);
 			this.words.splice(index + 1, 0, newWord);
@@ -283,7 +287,7 @@ class Element {
 		if (this.words.length == 0){
 			return false;
 		}
-		
+	
 		this.fallbackStyle = this.words[0].Style;
 		return true;
 	}
