@@ -96,9 +96,10 @@ class Character {
 
 	drawCursor(caret, x, y){
 		globalCanvasContext.beginPath();
-		globalCanvasContext.moveTo(caret.style.IsItalic ? x + 1 : x, y - caret.style.Size);
-		globalCanvasContext.lineTo(caret.style.IsItalic ? x - 1 : x, y);
-		globalCanvasContext.lineWidth = caret.style.IsBold ? 2 : 1;
+		globalCanvasContext.moveTo(caret.Style.IsItalic ? x + 1 : x, y - caret.Style.Size);
+		globalCanvasContext.lineTo(caret.Style.IsItalic ? x - 1 : x, y);
+		globalCanvasContext.lineWidth = caret.Style.IsBold ? 2 : 1;
+		globalCanvasContext.strokeStyle = caret.Style.Color;
 		globalCanvasContext.stroke();
 		return true;
 	}
@@ -112,7 +113,7 @@ class Character {
 	GrabCaret(caret, side){
 		caret.character = this;
 		caret.Side = side;
-		caret.style.Style = this.style;
+		caret.Style.Style = this.style;
 		return true;
 	}
 

@@ -36,9 +36,10 @@ class Line {
 		}
 		else if (this.wrappedWords.length == 0){
 			globalCanvasContext.beginPath();
-			globalCanvasContext.moveTo(caret.style.IsItalic ? this.screenX + 1 : this.screenX, this.screenY - caret.style.Size);
-			globalCanvasContext.lineTo(caret.style.IsItalic ? this.screenX - 1 : this.screenX, this.screenY);
-			globalCanvasContext.lineWidth = caret.style.IsBold ? 2 : 1;
+			globalCanvasContext.moveTo(caret.Style.IsItalic ? this.screenX + 1 : this.screenX, this.screenY - caret.Style.Size);
+			globalCanvasContext.lineTo(caret.Style.IsItalic ? this.screenX - 1 : this.screenX, this.screenY);
+			globalCanvasContext.lineWidth = caret.Style.IsBold ? 2 : 1;
+			globalCanvasContext.strokeStyle = caret.Style.Color;
 			globalCanvasContext.stroke();
 			return true;
 		}
