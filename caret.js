@@ -51,7 +51,7 @@ class Caret {
 	}
 
 	get DocumentX(){
-		return this.rightSide ? (this.character.documentX + this.character.Width) : this.character.documentX;
+		return this.character == null ? this.element.documentX : (this.rightSide ? (this.character.documentX + this.character.Width) : this.character.documentX);
 	}
 
 	set Side(value){
@@ -71,6 +71,7 @@ class Caret {
 	NoCharacter(style){
 		this.character = null;
 		this.style = style;
+		this.rightSide = false;
 		return true;
 	}
 

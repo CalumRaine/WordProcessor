@@ -2,7 +2,9 @@
 class Element {
 	words = [];
 	fallbackStyle = new FontStyle();
-	parseCursor = 0;
+	parseCursor = 0
+	documentX = 0;
+	documentY = 0;
 
 	constructor(words, fontStyle){
 		if (words != null){
@@ -82,6 +84,8 @@ class Element {
 
 	ParseNext(maxWidth, maxHeight, x, y){
 		// Get the next set of wrapped words that can fit on a line
+		this.documentX = x;
+		this.documentY = y;
 		let wrappedWords = [];
 		for (let w = this.parseCursor; w < this.words.length; ++w){
 			let wordToParse = this.words[w];

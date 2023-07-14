@@ -27,7 +27,7 @@ class Line {
 	}
 
 	HasCaret(caret){
-		return caret.element == this.element && this.wrappedWords.some(w => w.HasCaret(caret));
+		return caret.element == this.element && (caret.word == null || this.wrappedWords.some(w => w.HasCaret(caret)));
 	}
 
 	RenderCursor(caret){
