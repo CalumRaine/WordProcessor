@@ -66,7 +66,7 @@ class Line {
 			return true;
 		}
 		else {
-			return this.wrappedWords[this.LastIndex].PutCaretAtEnd(caret);
+			return this.wrappedWords.length == 0 ? this.element.PutCaretAtEnd(caret) : this.wrappedWords[this.LastIndex].PutCaretAtEnd(caret);
 		}
 	}
 
