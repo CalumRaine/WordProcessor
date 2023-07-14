@@ -34,10 +34,12 @@ class Caret {
 
 	HandleFontSize(event){
 		this.style.Size = event.detail;
+		return true;
 	}
 
 	HandleFontColor(event){
 		this.style.Color = event.detail;
+		return true;
 	}
 
 	get OnRight(){
@@ -93,7 +95,7 @@ class Caret {
 	HandleKey(event){
 		event.preventDefault();
 		let character = new Character(event.key, this.style.Clone());
-		this.element.InsertCharacter(this, character);
+		return this.element.InsertCharacter(this, character);
 	}
 
 	HandleEnter(){

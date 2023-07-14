@@ -1,14 +1,14 @@
-// Display line
-class WrappedLine {
+// Display line (element content wrapped into lines)
+class Line {
 	wrappedWords = [];
 	documentX = 0;
 	documentY = 0;
 	screenX = 0;
 	screenY = 0;
-	contentElement = null;
+	element = null;
 
-	constructor(contentElement, wrappedWords, x, y){
-		this.contentElement = contentElement;
+	constructor(element, wrappedWords, x, y){
+		this.element = element;
 		this.wrappedWords = wrappedWords;
 		this.documentX = x;
 		this.documentY = y;
@@ -19,7 +19,7 @@ class WrappedLine {
 	}
 
 	get Height(){
-		return this.wrappedWords.length == 0 ? this.contentElement.fallbackStyle.Size : Math.max(...this.wrappedWords.map(w => w.Height));
+		return this.wrappedWords.length == 0 ? this.element.fallbackStyle.Size : Math.max(...this.wrappedWords.map(w => w.Height));
 	}
 
 	get LastIndex(){
@@ -27,11 +27,11 @@ class WrappedLine {
 	}
 
 	HasCaret(caret){
-		return caret.element == this.contentElement && this.wrappedWords.some(w => w.HasCaret(caret));
+		return caret.element == this.element && this.wrappedWords.some(w => w.HasCaret(caret));
 	}
 
 	RenderCursor(caret){
-		if (caret.element != this.contentElement){
+		if (caret.element != this.element){
 			return false;
 		}
 		else if (this.wrappedWords.length == 0){
@@ -58,9 +58,9 @@ class WrappedLine {
 	}
 
 	PutCaretAtX(caret, x){
-		caret.element = this.contentElement;
+		caret.element = this.element;
 		if (x <= this.documentX){
-			return this.wrappedWords.length == 0 ? this.contentElement.PutCaretAtStart(caret) : this.wrappedWords[0].PutCaretAtStart(caret);
+			return this.wrappedWords.length == 0 ? this.element.PutCaretAtStart(caret) : this.wrappedWords[0].PutCaretAtStart(caret);
 		}
 		else if (this.wrappedWords.some(w => w.ClaimCaretAtX(caret, x))){
 			return true;

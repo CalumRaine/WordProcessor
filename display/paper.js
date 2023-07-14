@@ -1,6 +1,6 @@
 // Display paper
-class WrappedPage {
-	wrappedLines = [];
+class Paper {
+	lines = [];
 	lineGap = 5;
 	bodyWidth = 500;
 	bodyHeight = 700;
@@ -10,11 +10,11 @@ class WrappedPage {
 	screenY = 0;
 	documentX = 0;
 	documentY = 0;
-	contentPage = null
+	page = null
 
-	constructor(contentPage, wrappedLines, x, y){
-		this.contentPage = contentPage;
-		this.wrappedLines = wrappedLines;
+	constructor(page, lines, x, y){
+		this.page = page;
+		this.lines = lines;
 		this.documentX = x;
 		this.documentY = y;
 	}
@@ -28,15 +28,15 @@ class WrappedPage {
 	}
 
 	get LastIndex(){
-		return this.wrappedLines.length - 1;
+		return this.lines.length - 1;
 	}
 
 	HasCaret(caret){
-		return caret.page == this.contentPage && this.wrappedLines.some(l => l.HasCaret(caret));
+		return caret.page == this.page && this.lines.some(l => l.HasCaret(caret));
 	}
 
 	RenderCursor(caret){
-		return caret.page == this.contentPage && this.wrappedLines.some(l => l.RenderCursor(caret));
+		return caret.page == this.page && this.lines.some(l => l.RenderCursor(caret));
 	}
 
 	Render(x, y){
@@ -50,38 +50,38 @@ class WrappedPage {
 		y += this.vMargin;
 		//this.debugRect(x, y, this.bodyWidth, this.bodyHeight, "gray");
 
-		for (let wrappedLine of this.wrappedLines){
-			y += wrappedLine.Height;
-			//this.debugLine(x, y, wrappedLine.Width, "gray");
-			wrappedLine.Render(x, y);
+		for (let line of this.lines){
+			y += line.Height;
+			//this.debugLine(x, y, line.Width, "gray");
+			line.Render(x, y);
 			y += this.lineGap;
-			//this.debugLine(x, y, wrappedLine.Width, "gray");
+			//this.debugLine(x, y, line.Width, "gray");
 		}
 		return true;
 	}
 
 	Up(caret){
 		let index = this.getCaretIndex(caret);
-		return index == 0 ? false : this.wrappedLines[index-1].PutCaretAtX(caret, caret.DocumentX);
+		return index == 0 ? false : this.lines[index-1].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	Down(caret){
 		let index = this.getCaretIndex(caret);
-		return index == this.LastIndex ? false : this.wrappedLines[index+1].PutCaretAtX(caret, caret.DocumentX);
+		return index == this.LastIndex ? false : this.lines[index+1].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	PutCaretAtFirstX(caret){
-		caret.page = this.contentPage;
-		return this.wrappedLines[0].PutCaretAtX(caret, caret.DocumentX);
+		caret.page = this.page;
+		return this.lines[0].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	PutCaretAtLastX(caret){
-		caret.page = this.contentPage;
-		return this.wrappedLines[this.LastIndex].PutCaretAtX(caret, caret.DocumentX);
+		caret.page = this.page;
+		return this.lines[this.LastIndex].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	getCaretIndex(caret){
-		return this.wrappedLines.findIndex(l => l.HasCaret(caret));
+		return this.lines.findIndex(l => l.HasCaret(caret));
 	}
 
 	debugRect(x, y, width, height, color){

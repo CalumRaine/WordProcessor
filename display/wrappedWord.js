@@ -1,69 +1,64 @@
 // Display word
 class WrappedWord {
-	wrappedCharacters = [];
+	characters = [];
 	screenX = 0;
 	screenY = 0;
 	documentX = 0;
 	documentY = 0;
 	contentWord = null;
 
-	constructor(contentWord, wrappedCharacters, x, y){
+	constructor(contentWord, characters, x, y){
 		this.contentWord = contentWord;
-		this.wrappedCharacters = wrappedCharacters;
+		this.characters = characters;
 		this.documentX = x;
 		this.documentY = y;
 	}
 
 	get Width(){
-		return this.wrappedCharacters.reduce((sum, character) => sum + character.Width, 0);
+		return this.characters.reduce((sum, character) => sum + character.Width, 0);
 	}
 
 	get Height(){
-		return Math.max(...this.wrappedCharacters.map(c => c.Height));
-	}
-
-	get Empty(){
-		return this.wrappedCharacters[0].Empty;
+		return Math.max(...this.characters.map(c => c.Height));
 	}
 
 	get LastIndex(){
-		return this.wrappedCharacters.length - 1;
+		return this.characters.length - 1;
 	}
 
 	HasCaret(caret){
-		return caret.word == this.contentWord && this.wrappedCharacters.some(c => c.HasCaret(caret));
+		return caret.word == this.contentWord && this.characters.some(c => c.HasCaret(caret));
 	}
 
 	RenderCursor(caret){
-		return caret.word == this.contentWord && this.wrappedCharacters.some(c => c.RenderCursor(caret));
+		return caret.word == this.contentWord && this.characters.some(c => c.RenderCursor(caret));
 	}
 
 	Render(x, y){
 		this.screenX = x;
 		this.screenY = y;
-		for (let wrappedCharacter of this.wrappedCharacters){
-			wrappedCharacter.Render(x, y);
-			globalCanvasContext.font = wrappedCharacter.style.CssFont;
-			globalCanvasContext.fillStyle = wrappedCharacter.style.CssFill;
-			globalCanvasContext.fillText(wrappedCharacter.character, x, y);
-			x += wrappedCharacter.Width;
+		for (let character of this.characters){
+			character.Render(x, y);
+			globalCanvasContext.font = character.style.CssFont;
+			globalCanvasContext.fillStyle = character.style.CssFill;
+			globalCanvasContext.fillText(character.character, x, y);
+			x += character.Width;
 		}
 		return true;
 	}
 
 	PutCaretAtStart(caret){
 		caret.word = this.contentWord;
-		// This is not gonna work
-		return this.wrappedCharacters[0].GrabCaret(caret);
+		return this.characters[0].GrabCaret(caret);
 	}
 
 	PutCaretAtEnd(caret){
 		caret.word = this.contentWord;
-		return this.wrappedCharacters[this.LastIndex].GrabCaret(caret);
+		return this.characters[this.LastIndex].GrabCaret(caret);
 	}
 
 	ClaimCaretAtX(caret, x){
-		if (this.wrappedCharacters.some(c => c.ClaimCaretAtX(caret, x))){
+		if (this.characters.some(c => c.ClaimCaretAtX(caret, x))){
 			caret.word = this.contentWord;
 			return true;
 		}
@@ -71,7 +66,7 @@ class WrappedWord {
 	}
 
 	getCaretIndex(caret){
-		return this.wrappedCharacters.findIndex(c => c.HasCaret(caret));
+		return this.characters.findIndex(c => c.HasCaret(caret));
 	}
 
 	drawCursor(){

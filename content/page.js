@@ -59,21 +59,21 @@ class Page {
 		// Get the next set of wrapped elements that can fit on a page
 		let maxWidth = this.bodyWidth;
 		let maxHeight = this.bodyHeight;
-		let wrappedLines = [];
+		let lines = [];
 		for (let e = this.parseCursor; e < this.elements.length; ++e){
 			let elementToParse = this.elements[e];
 			do {
 				let wrappedWords = elementToParse.ParseNext(maxWidth, maxHeight, x, y);
 				if (wrappedWords == null){
 					// Page must wrap.  Line partially rendered but no more words can fit on page.
-					return wrappedLines.length == 0 ? null : wrappedLines;
+					return lines.length == 0 ? null : lines;
 				}
 				else {
-					let wrappedLine = new WrappedLine(elementToParse, wrappedWords, x, y);
-					wrappedLines.push(wrappedLine);
-					y += wrappedLine.Height;
+					let line = new Line(elementToParse, wrappedWords, x, y);
+					lines.push(line);
+					y += line.Height;
 					y += this.lineGap;
-					maxHeight -= wrappedLine.Height;
+					maxHeight -= line.Height;
 					maxHeight -= this.lineGap;
 				}
 			} while (!elementToParse.IsParsed);
@@ -82,7 +82,7 @@ class Page {
 			++this.parseCursor;
 		}
 
-		return wrappedLines;
+		return lines;
 	}
 
 	HandleBackspace(event, caret){
