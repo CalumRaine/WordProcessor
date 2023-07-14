@@ -1,87 +1,84 @@
 // Content page
 class Page {
-	lines = [];
+	elements = [];
 	parseCursor = 0;
 	bodyWidth = 500;
 	bodyHeight = 700;
 	lineGap = 5;
 
-	constructor(lines){
-		this.lines = lines == null ? [new Line()] : lines;
+	constructor(elements){
+		this.elements = (elements == null ? [new Element(null)] : elements);
 	}
 
-	get Parsed(){
-		return this.parseCursor == this.lines.length;
+	get IsParsed(){
+		return this.parseCursor == this.elements.length;
 	}
 
-	get Lines(){
-		return this.Empty ? [] : this.lines;
-	}
-
-	get Characters(){
-		return this.lines.flatMap(l => l.Characters);
-	}
-
-	get Text(){
-		return this.lines.map(l => l.Text).join("");
+	get Elements(){
+		return this.Empty ? [] : this.elements;
 	}
 
 	get Empty(){
-		return this.lines.length == 1 && this.lines[0].Empty;
-	}
-
-	get WordCount(){
-		return this.lines.reduce((sum, line) => sum + line.WordCount, 0);
+		return this.elements.length == 1 && this.elements[0].Empty;
 	}
 
 	get LastIndex(){
-		return this.lines.length - 1;
+		return this.elements.length - 1;
 	}
 
 	InitParse(){
 		this.parseCursor = 0;
-		this.lines.forEach(l => l.InitParse());
+		this.elements.forEach(l => l.InitParse());
 		return true;
 	}
 
-	CaretAtStart(caret){
-		return caret.page == this && (this.Empty || this.lines[0].CaretAtStart(caret));
+	IsCaretAtStart(caret){
+		return caret.page == this && (this.Empty || this.elements[0].IsCaretAtStart(caret));
+	}
+
+	IsCaretAtEnd(caret){
+		return caret.page == this && this.elements[this.LastIndex].IsCaretAtEnd(caret);
 	}
 
 	PutCaretAtStart(caret){
 		caret.page = this;
-		return this.lines[0].PutCaretAtStart(caret);
+		return this.elements[0].PutCaretAtStart(caret);
 	}
 
 	PutCaretAtEnd(caret){
 		caret.page = this;
-		return this.lines[this.LastIndex].PutCaretAtEnd(caret);
+		return this.elements[this.LastIndex].PutCaretAtEnd(caret);
+	}
+
+	PutCaretAtLast(caret){
+		caret.page = this;
+		return this.elements[this.LastIndex].PutCaretAtStart(caret);
 	}
 
 	ParseNext(x, y){
-		// Get the next set of wrapped lines that can fit on a page
+		// Get the next set of wrapped elements that can fit on a page
 		let maxWidth = this.bodyWidth;
 		let maxHeight = this.bodyHeight;
 		let wrappedLines = [];
-		for (let l = this.parseCursor; l < this.lines.length; ++l){
-			let lineToParse = this.lines[l];
+		for (let e = this.parseCursor; e < this.elements.length; ++e){
+			let elementToParse = this.elements[e];
 			do {
-				let wrappedWords = lineToParse.ParseNext(maxWidth, maxHeight, x, y);
+				let wrappedWords = elementToParse.ParseNext(maxWidth, maxHeight, x, y);
 				if (wrappedWords == null){
 					// Page must wrap.  Line partially rendered but no more words can fit on page.
 					return wrappedLines.length == 0 ? null : wrappedLines;
 				}
 				else {
-					let wrappedLine = new WrappedLine(lineToParse, wrappedWords, x, y);
+					let wrappedLine = new WrappedLine(elementToParse, wrappedWords, x, y);
 					wrappedLines.push(wrappedLine);
 					y += wrappedLine.Height;
 					y += this.lineGap;
 					maxHeight -= wrappedLine.Height;
 					maxHeight -= this.lineGap;
 				}
-			} while (!lineToParse.Parsed);
+			} while (!elementToParse.IsParsed);
 			
-			// Line successfully rendered.  Safe to advance.
+			// Element successfully rendered.  Safe to advance.
 			++this.parseCursor;
 		}
 
@@ -89,113 +86,127 @@ class Page {
 	}
 
 	HandleBackspace(event, caret){
-		if (this.CaretAtStart(caret)){
-			// Caret already at start of page.  No can do.
+		// Possibilities:
+		// 	(1) Caret at start of page.  Return false.
+		// 	(2) Caret at start of line.  Put caret at end of previous line.
+		// 	(3) Backspace successful.
+
+		if (this.IsCaretAtStart(caret)){
+			// (1)
 			return false;
 		}
 
 		let index = this.getCaretIndex(caret);
-		let line = this.lines[index];
-		if (line.HandleBackspace(event, caret)){
-			return true;
-		}
-		else if (line.Empty){
-			// Line is empty. Delete it.  We have others.
-			// If first line, pass caret to start of next line.
-			// Else pass caret to end of previous line.
-			this.lines.splice(index, 1);
-			this.lines[index-1].PutCaretAtEnd(caret);
-			return true;
-		}
-		else if (index > 0){
-			// Concatenate line with previous
-			let previousLine = this.lines[index-1];
-			if (previousLine.Empty){
-				this.lines.splice(index-1, 1);
+		let element = this.elements[index];
+		if (!element.HandleBackspace(event, caret)){
+			// (2)
+			let previousElement = this.elements[index-1];
+			if (element.Empty){
+				// Delete empty element
+				this.elements.splice(index, 1);
+				previousElement.PutCaretAtEnd(caret);
+			}
+			else if (previousElement.Empty){
+				// Delete prior empty element
+				this.elements.splice(index-1, 1);
 			}
 			else {
-				previousLine.PutCaretAtEnd(caret);
-				previousLine.AppendWords(line.Words);
-				this.lines.splice(index, 1);
+				// Concatenate element with previous
+				previousElement.PutCaretAtEnd(caret);
+				previousElement.AppendWords(element.Words);
+				this.elements.splice(index, 1);
 			}
-			return true;
 		}
 
-		// No previous line.  Request page concatenation.
-		return false;
+		// (3)
+		return true;
 	}
 
-	AppendLines(newLines){
-		let leftLine = this.lines[this.LastIndex];
-		let rightLine = newLines[0];
-		newLines.splice(0,1);
-		if (!rightLine.Empty){
-			leftLine.AppendWords(rightLine.Words);
+	AppendElements(newElements){
+		let leftElement = this.elements[this.LastIndex];
+		let rightElement = newElements[0];
+		newElements.splice(0,1);
+		if (!rightElement.Empty){
+			leftElement.AppendWords(rightElement.Words);
 		}
 
-		if (newLines.length > 0){
-			this.lines = this.lines.concat(newLines);
+		if (newElements.length > 0){
+			this.elements = this.elements.concat(newElements);
 		}
 
 		return true;
 	}
 
-	getCaretIndex(caret){
-		return this.lines.findIndex(l => l == caret.line);
-	}
-
 	HandleLeft(event, caret){
-		let index = this.getCaretIndex(caret);
-		let line = this.lines[index];
-		if (line.HandleLeft(event, caret)){
-			return true;
-		}
-		else if (index > 0) {
-			--index;
-			let previousLine = this.lines[index];
-			previousLine.PutCaretAtEnd(caret);
-			return true;
-		}
-		else {
+		// Possibilities:
+		// 	(1) Caret already at start of page.  Return false.
+		//	(2) Caret already at start of element.  Pass to prior element.
+
+
+		if (this.IsCaretAtStart(caret)){
+			// (1)
 			return false;
 		}
+
+		let index = this.getCaretIndex(caret);
+		let element = this.elements[index];
+		if (!element.HandleLeft(event, caret)){
+			// (2)
+			--index;
+			let previousElement = this.elements[index];
+			previousElement.PutCaretAtEnd(caret);
+		}
+		
+		// (3)
+		return true;
 	}
 
 	HandleRight(event, caret){
-		let index = this.getCaretIndex(caret);
-		let line = this.lines[index];
-		if (line.HandleRight(event, caret)){
-			return true;
-		}
-		else if (index < this.LastIndex) {
-			++index;
-			let nextLine = this.lines[index];
-			nextLine.PutCaretAtStart(caret);
-			return true;
-		}
-		else {
+		// Possibilities:
+		// 	(1) Caret already at end of page.  Return false.
+		//	(2) Caret already at end of element.  Pass to next element.
+		//	(3) Success
+
+		if (this.IsCaretAtEnd(caret)){
+			// (1)
 			return false;
 		}
+
+		let index = this.getCaretIndex(caret);
+		let element = this.elements[index];
+		if (!element.HandleRight(event, caret)){
+			// (2)
+			++index;
+			let nextElement = this.elements[index];
+			nextElement.PutCaretAtStart(caret);
+		}
+		
+		// (3)
+		return true;
 	}
 
 	PageBreak(caret){
 		let index = this.getCaretIndex(caret);
-		let line = this.lines[index];
-		let brokenLine = line.LineBreak(caret);
-		brokenLine.PutCaretAtStart(caret);
-		this.lines.splice(index+1, 0, brokenLine);
+		let element = this.elements[index];
+		let brokenElement = element.ElementBreak(caret);
+		brokenElement.PutCaretAtStart(caret);
+		this.elements.splice(index + 1, 0, brokenElement);
 		let toExtract = this.LastIndex - index;
-		let extractedLines = this.lines.splice(index + 1, toExtract);
-		let newPage = new Page(extractedLines.length == 0 ? null : extractedLines);
+		let extractedElements = this.elements.splice(index + 1, toExtract);
+		let newPage = new Page(extractedElements.length == 0 ? null : extractedElements);
 		return newPage;
 	}
 
-	LineBreak(caret){
+	ElementBreak(caret){
 		let index = this.getCaretIndex(caret);
-		let line = this.lines[index];
-		let brokenLine = line.LineBreak(caret);
-		this.lines.splice(index + 1, 0, brokenLine);
-		brokenLine.PutCaretAtStart(caret);
+		let element = this.elements[index];
+		let brokenElement = element.ElementBreak(caret);
+		this.elements.splice(index + 1, 0, brokenElement);
+		brokenElement.PutCaretAtStart(caret);
 		return true;
+	}
+
+	getCaretIndex(caret){
+		return this.elements.findIndex(l => l == caret.element);
 	}
 }
