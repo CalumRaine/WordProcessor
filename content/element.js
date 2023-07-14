@@ -114,7 +114,7 @@ class Element {
 		// 	(3) Word accepts character
 
 		if (this.Empty){
-			// (2)
+			// (1)
 			let word = new Word([newCharacter]);
 			this.words.push(word);
 			word.PutCaretAtEnd(caret);	
