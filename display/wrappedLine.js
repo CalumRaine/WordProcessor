@@ -5,10 +5,10 @@ class WrappedLine {
 	documentY = 0;
 	screenX = 0;
 	screenY = 0;
-	contentLine = null;
+	contentElement = null;
 
-	constructor(contentLine, wrappedWords, x, y){
-		this.contentLine = contentLine;
+	constructor(contentElement, wrappedWords, x, y){
+		this.contentElement = contentElement;
 		this.wrappedWords = wrappedWords;
 		this.documentX = x;
 		this.documentY = y;
@@ -19,7 +19,7 @@ class WrappedLine {
 	}
 
 	get Height(){
-		return Math.max(this.contentLine.style.Height, ...this.wrappedWords.map(w => w.Height));
+		return this.wrappedWords.length == 0 ? this.contentElement.fallbackStyle.Size : Math.max(...this.wrappedWords.map(w => w.Height));
 	}
 
 	get LastIndex(){
@@ -27,11 +27,24 @@ class WrappedLine {
 	}
 
 	HasCaret(caret){
-		return caret.line == this.contentLine && this.wrappedWords.some(w => w.HasCaret(caret));
+		return caret.element == this.contentElement && this.wrappedWords.some(w => w.HasCaret(caret));
 	}
 
 	RenderCursor(caret){
-		return caret.line == this.contentLine && this.wrappedWords.some(w => w.RenderCursor(caret));
+		if (caret.element != this.contentElement){
+			return false;
+		}
+		else if (this.wrappedWords.length == 0){
+			globalCanvasContext.beginPath();
+			globalCanvasContext.moveTo(caret.style.IsItalic ? this.screenX + 1 : this.screenX, this.screenY - caret.style.Size);
+			globalCanvasContext.lineTo(caret.style.IsItalic ? this.screenX - 1 : this.screenX, this.screenY);
+			globalCanvasContext.lineWidth = caret.style.IsBold ? 2 : 1;
+			globalCanvasContext.stroke();
+			return true;
+		}
+		else {
+			return this.wrappedWords.some(w => w.RenderCursor(caret));
+		}
 	}
 
 	Render(x, y){
@@ -45,7 +58,7 @@ class WrappedLine {
 	}
 
 	PutCaretAtX(caret, x){
-		caret.line = this.contentLine;
+		caret.element = this.contentElement;
 		if (x <= this.documentX){
 			return this.wrappedWords[0].PutCaretAtStart(caret);
 		}
