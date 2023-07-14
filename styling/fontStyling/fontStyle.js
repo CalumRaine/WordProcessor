@@ -56,7 +56,13 @@ class FontStyle {
 	}
 
 	Dec(){
-		this.size = this.size > this.sizeStep ? this.size - this.sizeStep : this.sizeStep;
+		this.size -= this.sizeStep;
+
+		if (this.size < 1){
+			this.size = 1;
+			return false;
+		}
+
 		return true;
 	}
 
