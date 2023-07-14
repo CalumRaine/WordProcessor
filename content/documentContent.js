@@ -51,8 +51,8 @@ class DocumentContent {
 		}
 		else if (index > 0) {
 			let previousPage = this.pages[index-1];
-			previousPage.PutCaretAtEnd(caret);
-			previousPage.AppendLines(page.Lines);
+			previousPage.AppendElements(page.Elements);
+			previousPage.PutCaretAtLast(caret);
 			this.pages.splice(index, 1);
 			return true;
 		}
