@@ -113,7 +113,7 @@ class Page {
 			else {
 				// Concatenate element with previous
 				previousElement.PutCaretAtEnd(caret);
-				previousElement.AppendWords(element.Words);
+				previousElement.AppendWords(element.Words, caret);
 				this.elements.splice(index, 1);
 			}
 		}
@@ -122,12 +122,12 @@ class Page {
 		return true;
 	}
 
-	AppendElements(newElements){
+	AppendElements(newElements, caret){
 		let leftElement = this.elements[this.LastIndex];
 		let rightElement = newElements[0];
 		newElements.splice(0,1);
 		if (!rightElement.Empty){
-			leftElement.AppendWords(rightElement.Words);
+			leftElement.AppendWords(rightElement.Words, caret);
 		}
 
 		if (newElements.length > 0){

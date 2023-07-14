@@ -56,7 +56,7 @@ class Element {
 		return caret.element == this && (this.Empty || this.words[this.LastIndex].IsCaretAtEnd(caret));
 	}
 
-	AppendWords(newWords){
+	AppendWords(newWords, caret){
 		// Possibilities:
 		// 	(1) New Words are empty.  Do nothing.
 		// 	(2) Element already contains words.  Check whether splice point requires concatenating.
@@ -78,6 +78,11 @@ class Element {
 
 		// (3)
 		this.words = this.words.concat(newWords);
+
+		if (caret.word == null){
+			this.PutCaretAtStart(caret);
+		}
+
 		this.updateFallbackStyle();
 		return true;
 	}
