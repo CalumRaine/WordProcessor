@@ -66,12 +66,6 @@ class Character {
 		return caret.character == this && caret.OnRight;
 	}
 
-	Clear(){
-		this.character = Character.DUMMY;
-		this.dimensions = globalCanvasContext.measureText(this.character);
-		return true;
-	}
-
 	ClaimCaretAtX(caret, x){
 		if (x < this.documentX || x > (this.documentX + this.Width)){
 			return false;
