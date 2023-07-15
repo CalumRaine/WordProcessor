@@ -10,6 +10,7 @@ class CalumDocument extends HTMLCanvasElement {
 		super();
 		this.width = 750;
 		this.height = 600;
+		this.display = new DocumentDisplay(this.width, this.height);
 		this.content.PutCaretAtStart(this.caret);
 		globalCanvasContext = this.getContext("2d");
 		globalCanvasContext.font = "20px sans-serif";
@@ -68,9 +69,8 @@ class CalumDocument extends HTMLCanvasElement {
 	}
 
 	render(){
-		globalCanvasContext.clearRect(0, 0, this.width, this.height);
 		this.display.Parse(this.content.Pages);
-		this.display.Render(400, 400 + this.height);
+		this.display.Render();
 		this.display.RenderCursor(this.caret);
 	}
 

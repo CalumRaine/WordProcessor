@@ -39,24 +39,15 @@ class Paper {
 		return caret.page == this.page && this.lines.some(l => l.RenderCursor(caret));
 	}
 
-	Render(x, y){
-		// draw page
-		this.debugRect(x, y, this.Width, this.Height, "black");
-		this.screenX = x;
-		this.screenY = y;
-
-		// draw body
-		x += this.hMargin;
-		y += this.vMargin;
-		//this.debugRect(x, y, this.bodyWidth, this.bodyHeight, "gray");
-
-		for (let line of this.lines){
-			y += line.Height;
-			//this.debugLine(x, y, line.Width, "gray");
-			line.Render(x, y);
-			y += this.lineGap;
-			//this.debugLine(x, y, line.Width, "gray");
+	Render(scrollTop, scrollBottom){
+		if (this.documentY > scrollBottom || (this.documentY + this.Height) < scrollTop){
+			return false;
 		}
+		let screenHeight = scrollBottom - scrollTop;
+		let screenTop = this.documentY - scrollTop;
+		let screenBottom = screenTop + this.Height;
+		this.debugRect(this.documentX, screenTop, this.Width, this.Height, "black");
+		this.lines.forEach(l => l.Render(scrollTop, scrollBottom));
 		return true;
 	}
 

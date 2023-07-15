@@ -2,18 +2,30 @@
 class DocumentDisplay {
 	sheets = [];
 	pageGap = 20;
+	marginX = 20;
+	marginY = 20;
+	scrollPosition = 0;
+	width = 0;
+	height = 0;
 	
-	constructor(){
-
+	constructor(windowWidth, windowHeight){
+		this.width = windowWidth;
+		this.height = windowHeight;
+		document.addEventListener("wheel", (event) => this.HandleScroll(event));
 	}
 
 	get LastIndex(){
 		return this.sheets.length - 1;
 	}
 
+	HandleScroll(event){
+		this.scrollPosition += event.deltaY;
+		this.Render();
+	}
+
 	Parse(pages){
-		let x = 0;
-		let y = 0;
+		let x = this.marginX;
+		let y = this.marginY;
 		this.sheets = [];
 		for (let page of pages){
 			page.InitParse();
@@ -28,14 +40,10 @@ class DocumentDisplay {
 	}
 
 	Render(){
-		let x = 20;
-		let y = 20;
-		for (let paper of this.sheets){
-			paper.Render(x, y);
-			y += paper.Height;
-			y += this.pageGap;
-		}
-	
+		globalCanvasContext.clearRect(0, 0, this.width, this.height);
+		let scrollTop = this.scrollPosition;
+		let scrollBottom = scrollTop + this.height;
+		this.sheets.forEach(p => p.Render(scrollTop, scrollBottom));
 		return true;
 	}
 

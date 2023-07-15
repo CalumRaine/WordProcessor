@@ -4,6 +4,8 @@ class Page {
 	parseCursor = 0;
 	bodyWidth = 500;
 	bodyHeight = 700;
+	vMargin = 50;
+	hMargin = 70;
 	lineGap = 5;
 
 	constructor(elements){
@@ -59,6 +61,8 @@ class Page {
 		// Get the next set of wrapped elements that can fit on a page
 		let maxWidth = this.bodyWidth;
 		let maxHeight = this.bodyHeight;
+		y += this.hMargin;
+		x += this.vMargin;
 		let lines = [];
 		for (let e = this.parseCursor; e < this.elements.length; ++e){
 			let elementToParse = this.elements[e];

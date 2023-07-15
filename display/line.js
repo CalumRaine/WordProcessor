@@ -48,13 +48,23 @@ class Line {
 		}
 	}
 
-	Render(x, y){
+	Render(scrollTop, scrollBottom){
+		if (this.documentY > (scrollBottom+this.Height) || (this.documentY + this.Height) < scrollTop){
+			return false;
+		}
+		let screenHeight = scrollBottom - scrollTop;
+		let screenTop = this.documentY - scrollTop;
+		let screenBottom = screenTop + screenHeight;
+
+		let x = this.documentX;
+		let y = screenTop + this.Height;
 		this.screenX = x;
 		this.screenY = y;
 		for (let wrappedWord of this.wrappedWords){
 			wrappedWord.Render(x, y);
 			x += wrappedWord.Width;
 		}
+
 		return true;
 	}
 
