@@ -28,14 +28,7 @@
 </head>
 <body>
 	<div is="style-palette"></div>
-	<canvas></canvas>
-	<script>
-		var canvas = document.querySelector("canvas");
-		canvas.width = 1000;
-		canvas.height = 1000;
-		var globalCanvasContext = canvas.getContext("2d");
-		globalCanvasContext.font = "20px sans-serif";
-		var calumDocument = new CalumDocument();
-	</script>
+	<script>var globalCanvasContext = null;</script>
+	<canvas is="calum-document"></canvas>
 </body>
 </html>

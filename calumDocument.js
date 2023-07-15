@@ -1,13 +1,18 @@
 // Master object.  
 // Coordinates content, display and caret.  
 // Should really extend the HTML canvas element directly.
-class CalumDocument {
+class CalumDocument extends HTMLCanvasElement {
 	content = new DocumentContent();
 	display = new DocumentDisplay();
 	caret = new Caret();
 
 	constructor(){
+		super();
+		this.width = 750;
+		this.height = 600;
 		this.content.PutCaretAtStart(this.caret);
+		globalCanvasContext = this.getContext("2d");
+		globalCanvasContext.font = "20px sans-serif";
 		document.addEventListener("keydown", (event) => this.handleKey(event));
 	}
 
@@ -63,11 +68,13 @@ class CalumDocument {
 	}
 
 	render(){
-		globalCanvasContext.clearRect(0, 0, 1000, 1000);
+		globalCanvasContext.clearRect(0, 0, this.width, this.height);
 		this.display.Parse(this.content.Pages);
-		this.display.Render();
+		this.display.Render(400, 400 + this.height);
 		this.display.RenderCursor(this.caret);
 	}
 
 	dummyText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 }
+
+customElements.define("calum-document", CalumDocument, { extends: "canvas" });
