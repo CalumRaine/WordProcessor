@@ -14,7 +14,17 @@ class CalumDocument extends HTMLCanvasElement {
 		this.content.PutCaretAtStart(this.caret);
 		globalCanvasContext = this.getContext("2d");
 		globalCanvasContext.font = "20px sans-serif";
+		this.onclick = (event) => this.handleClick(event);
+		document.addEventListener("wheel", (event) => this.handleScroll(event));
 		document.addEventListener("keydown", (event) => this.handleKey(event));
+	}
+
+	handleClick(event){
+		return this.display.HandleClick(event, this.caret);
+	}
+
+	handleScroll(event){
+		return this.display.HandleScroll(event, this.caret);
 	}
 
 	handleKey(event){

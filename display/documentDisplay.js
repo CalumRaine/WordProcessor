@@ -11,16 +11,24 @@ class DocumentDisplay {
 	constructor(windowWidth, windowHeight){
 		this.width = windowWidth;
 		this.height = windowHeight;
-		document.addEventListener("wheel", (event) => this.HandleScroll(event));
 	}
 
 	get LastIndex(){
 		return this.sheets.length - 1;
 	}
 
-	HandleScroll(event){
+	HandleClick(event, caret){
+		this.sheets.some(p => p.ClaimCaretAtXY(caret, event.offsetX, event.offsetY));
+		this.Render();
+		this.RenderCursor(caret);
+		return true;
+	}
+
+	HandleScroll(event, caret){
 		this.scrollPosition += event.deltaY;
 		this.Render();
+		this.RenderCursor(caret);
+		return true;
 	}
 
 	Parse(pages){

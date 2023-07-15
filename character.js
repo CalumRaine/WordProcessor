@@ -4,6 +4,7 @@ class Character {
 	documentX = 0;
 	documentY = 0;
 	screenY = 0;
+	onScreen = false;
 	style = new FontStyle();
 	
 	constructor(character, style){
@@ -23,6 +24,11 @@ class Character {
 
 	get Style(){
 		return this.style;
+	}
+
+	set OnScreen(value){
+		this.onScreen = value;
+		return true;
 	}
 
 	Left(caret){
@@ -51,6 +57,7 @@ class Character {
 	}
 
 	Render(scrollTop){
+		this.onScreen = true;
 		this.screenY = this.documentY - scrollTop;
 		return true;
 	}

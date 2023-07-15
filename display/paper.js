@@ -8,6 +8,7 @@ class Paper {
 	hMargin = 70;
 	documentX = 0;
 	documentY = 0;
+	onScreen = false;
 	page = null
 
 	constructor(page, lines, x, y){
@@ -29,6 +30,23 @@ class Paper {
 		return this.lines.length - 1;
 	}
 
+	set OnScreen(value){
+		this.onScreen = value;
+		this.lines.forEach(l => l.OnScreen = value);
+		return true;
+	}
+
+	ClaimCaretAtXY(caret, x, y){
+		if (!this.onScreen || y > (this.screenY + this.Height)){
+			return false;
+		}
+		else if (!this.lines.some(l => l.ClaimCaretAtXY(caret, x, y))){
+			this.lines[this.LastIndex].PutCaretAtX(caret, x);
+		}
+	
+		return true;
+	}
+
 	HasCaret(caret){
 		return caret.page == this.page && this.lines.some(l => l.HasCaret(caret));
 	}
@@ -39,11 +57,13 @@ class Paper {
 
 	Render(scrollTop, scrollBottom){
 		if (this.documentY > scrollBottom || (this.documentY + this.Height) < scrollTop){
+			this.OnScreen = false;
 			return false;
 		}
 
-		let screenY = this.documentY - scrollTop;
-		this.debugRect(this.documentX, screenY, this.Width, this.Height, "black");
+		this.onScreen = true;
+		this.screenY = this.documentY - scrollTop;
+		this.debugRect(this.documentX, this.screenY, this.Width, this.Height, "black");
 		this.lines.forEach(l => l.Render(scrollTop, scrollBottom));
 		return true;
 	}
