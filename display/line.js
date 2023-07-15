@@ -3,7 +3,6 @@ class Line {
 	wrappedWords = [];
 	documentX = 0;
 	documentY = 0;
-	screenX = 0;
 	screenY = 0;
 	element = null;
 
@@ -36,8 +35,8 @@ class Line {
 		}
 		else if (this.wrappedWords.length == 0){
 			globalCanvasContext.beginPath();
-			globalCanvasContext.moveTo(caret.Style.IsItalic ? this.screenX + 1 : this.screenX, this.screenY - caret.Style.Size);
-			globalCanvasContext.lineTo(caret.Style.IsItalic ? this.screenX - 1 : this.screenX, this.screenY);
+			globalCanvasContext.moveTo(caret.Style.IsItalic ? this.documentX + 1 : this.documentX, this.screenY - caret.Style.Size);
+			globalCanvasContext.lineTo(caret.Style.IsItalic ? this.documentX - 1 : this.documentX, this.screenY);
 			globalCanvasContext.lineWidth = caret.Style.IsBold ? 2 : 1;
 			globalCanvasContext.strokeStyle = caret.Style.Color;
 			globalCanvasContext.stroke();
@@ -52,19 +51,9 @@ class Line {
 		if (this.documentY > (scrollBottom+this.Height) || (this.documentY + this.Height) < scrollTop){
 			return false;
 		}
-		let screenHeight = scrollBottom - scrollTop;
-		let screenTop = this.documentY - scrollTop;
-		let screenBottom = screenTop + screenHeight;
 
-		let x = this.documentX;
-		let y = screenTop + this.Height;
-		this.screenX = x;
-		this.screenY = y;
-		for (let wrappedWord of this.wrappedWords){
-			wrappedWord.Render(x, y);
-			x += wrappedWord.Width;
-		}
-
+		this.screenY = this.documentY - scrollTop;
+		this.wrappedWords.forEach(w => w.Render(scrollTop));
 		return true;
 	}
 

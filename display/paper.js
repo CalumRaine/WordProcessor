@@ -6,8 +6,6 @@ class Paper {
 	bodyHeight = 700;
 	vMargin = 50;
 	hMargin = 70;
-	screenX = 0;
-	screenY = 0;
 	documentX = 0;
 	documentY = 0;
 	page = null
@@ -43,10 +41,9 @@ class Paper {
 		if (this.documentY > scrollBottom || (this.documentY + this.Height) < scrollTop){
 			return false;
 		}
-		let screenHeight = scrollBottom - scrollTop;
-		let screenTop = this.documentY - scrollTop;
-		let screenBottom = screenTop + this.Height;
-		this.debugRect(this.documentX, screenTop, this.Width, this.Height, "black");
+
+		let screenY = this.documentY - scrollTop;
+		this.debugRect(this.documentX, screenY, this.Width, this.Height, "black");
 		this.lines.forEach(l => l.Render(scrollTop, scrollBottom));
 		return true;
 	}

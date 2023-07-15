@@ -1,7 +1,6 @@
 // Display word
 class WrappedWord {
 	characters = [];
-	screenX = 0;
 	screenY = 0;
 	documentX = 0;
 	documentY = 0;
@@ -34,15 +33,15 @@ class WrappedWord {
 		return caret.word == this.contentWord && this.characters.some(c => c.RenderCursor(caret));
 	}
 
-	Render(x, y){
-		this.screenX = x;
-		this.screenY = y;
+	Render(scrollTop){
+		this.screenY = this.documentY - scrollTop;
+		let screenX = this.documentX;
 		for (let character of this.characters){
-			character.Render(x, y);
+			character.Render(scrollTop);
 			globalCanvasContext.font = character.style.CssFont;
 			globalCanvasContext.fillStyle = character.style.CssFill;
-			globalCanvasContext.fillText(character.character, x, y);
-			x += character.Width;
+			globalCanvasContext.fillText(character.character, screenX, this.screenY);
+			screenX += character.Width;
 		}
 		return true;
 	}
@@ -67,13 +66,5 @@ class WrappedWord {
 
 	getCaretIndex(caret){
 		return this.characters.findIndex(c => c.HasCaret(caret));
-	}
-
-	drawCursor(){
-		globalCanvasContext.beginPath();
-		globalCanvasContext.moveTo(this.screenX, this.screenY);
-		globalCanvasContext.lineTo(this.screenX + this.Height);
-		globalCanvasContext.stroke();
-		return true;
 	}
 }

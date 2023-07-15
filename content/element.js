@@ -106,7 +106,6 @@ class Element {
 					maxWidth -= wrappedWord.Width;
 					wrappedWords.push(wrappedWord);
 				}
-
 			} while (!wordToParse.IsParsed);
 
 			// Word successfully parsed.  Safe to advance

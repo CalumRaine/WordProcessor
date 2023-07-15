@@ -3,7 +3,6 @@ class Character {
 	dimensions = null;
 	documentX = 0;
 	documentY = 0;
-	screenX = 0;
 	screenY = 0;
 	style = new FontStyle();
 	
@@ -41,7 +40,6 @@ class Character {
 	InitParse(){
 		this.documentX = 0;
 		this.documentY = 0;
-		this.screenX = 0;
 		this.screenY = 0;
 		return true;
 	}
@@ -52,9 +50,8 @@ class Character {
 		return true;
 	}
 
-	Render(x, y){
-		this.screenX = x;
-		this.screenY = y;
+	Render(scrollTop){
+		this.screenY = this.documentY - scrollTop;
 		return true;
 	}
 
@@ -87,10 +84,10 @@ class Character {
 			return false;
 		}
 		else if (caret.OnLeft){
-			return this.drawCursor(caret, this.screenX, this.screenY);
+			return this.drawCursor(caret, this.documentX, this.screenY);
 		}
 		else {
-			return this.drawCursor(caret, this.screenX + this.Width, this.screenY);
+			return this.drawCursor(caret, this.documentX + this.Width, this.screenY);
 		}
 	}
 

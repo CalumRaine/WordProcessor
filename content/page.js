@@ -12,6 +12,14 @@ class Page {
 		this.elements = (elements == null ? [new Element(null)] : elements);
 	}
 
+	get Height(){
+		return this.bodyHeight + this.vMargin + this.vMargin;
+	}
+
+	get Width(){
+		return this.bodyWidth + this.hMargin + this.hMargin;
+	}
+
 	get IsParsed(){
 		return this.parseCursor == this.elements.length;
 	}
@@ -59,10 +67,12 @@ class Page {
 
 	ParseNext(x, y){
 		// Get the next set of wrapped elements that can fit on a page
-		let maxWidth = this.bodyWidth;
 		let maxHeight = this.bodyHeight;
+		let maxWidth = this.bodyWidth;
+
 		y += this.hMargin;
 		x += this.vMargin;
+
 		let lines = [];
 		for (let e = this.parseCursor; e < this.elements.length; ++e){
 			let elementToParse = this.elements[e];
