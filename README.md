@@ -16,20 +16,20 @@ Download the [src](./src/) directory and open [index.html](./src/index.html) in 
 * List elements
 * Text alignment (center/justify)
 * Underline text
-* Update the font palette as the caret moves and adopts new styles
+* Update the font palette when the caret moves and adopts new styles
 * Text selection
 
 
 ## Done (kind of)
 
 * Paragraph elements
-* Simple styling: font family, size, bold, italic
+* Simple styling: font family, size, color, bold, italic
 * Backspace, deletion, line/page concatenation 
 * Page breaks, line breaks, blank lines
 * Rendering sections/elements to pages/lines on-screen
 * Caret rendering
-* Scrolling
 * Click to move caret
+* Scrolling
 
 
 
