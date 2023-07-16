@@ -44,7 +44,7 @@ I have currently settled on the following structure:
         * Characters\*
     * Caret
 
-\* (Same object, shared)
+\* _(Same object, shared)_
 
 The `caret` object contains properties that reference the `section`, `element`, `word` and `character` that owns it in the `content` tree.  As discussed at the end of this blog post, characters bridge both worlds too and so the `display` tree can also locate the caret by sourcing the `character` that owns it.
 
