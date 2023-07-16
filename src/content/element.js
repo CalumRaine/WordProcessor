@@ -287,10 +287,6 @@ class Element {
 		return true;
 	}
 
-	getCaretIndex(caret){
-		return this.words.findIndex(w => w == caret.word);
-	}
-
 	updateFallbackStyle(){
 		if (this.words.length == 0){
 			return false;
@@ -299,4 +295,9 @@ class Element {
 		this.fallbackStyle = this.words[0].Style;
 		return true;
 	}
+
+	getCaretIndex(caret){
+		return this.words.findIndex(w => w == caret.word);
+	}
+
 }

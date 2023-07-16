@@ -6,24 +6,12 @@ class DocumentContent {
 		this.sections = sections == null ? [new Section()] : sections;
 	}
 
-	get Empty(){
-		return this.sections.length == 1 && this.sections[0].Empty;
-	}
-
 	get Sections(){
 		return this.sections;
 	}
 
-	get Characters(){
-		return this.sections.flatMap(s => s.Characters);
-	}
-
-	get Text(){
-		return this.sections.map(s => s.Text).join("");
-	}
-
-	get WordCount(){
-		return this.sections.reduce((sum, section) => sum + section.WordCount, 0);
+	get Empty(){
+		return this.sections.length == 1 && this.sections[0].Empty;
 	}
 
 	get LastIndex(){
@@ -79,10 +67,6 @@ class DocumentContent {
 		return section.PutCaretAt(caret) ? true : this.sections[index-1].PutCaretAt(caret)
 	}
 
-	getCaretIndex(caret){
-		return this.sections.findIndex(p => p == caret.section);
-	}
-
 	handleLeft(event, caret){
 		let index = this.getCaretIndex(caret);
 		let section = this.sections[index];
@@ -119,19 +103,7 @@ class DocumentContent {
 		}
 	}
 
-	/* -- */
-	split(caret){
-		this.SectionBreak(caret);
-		let index = this.getCaretIndex(caret);
-		let toExtract = this.LastIndex - index;
-		let extractedLines = this.lines.splice(index, toExtract);
-		let newSection = new Section(extractedLines);
-		return newSection;
-	}
-
-	insertSectionAfter(section, index){
-		this.lines.splice(index + 1, 0, section);
-		section.grabCaret(caret, false);
-		return true;
+	getCaretIndex(caret){
+		return this.sections.findIndex(p => p == caret.section);
 	}
 }

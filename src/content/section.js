@@ -221,6 +221,6 @@ class Section {
 	}
 
 	getCaretIndex(caret){
-		return this.elements.findIndex(l => l == caret.element);
+		return this.elements.findIndex(e => e == caret.element);
 	}
 }
