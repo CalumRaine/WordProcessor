@@ -1,5 +1,5 @@
-// Display paper
-class Paper {
+// Display page
+class Page {
 	lines = [];
 	lineGap = 5;
 	bodyWidth = 500;

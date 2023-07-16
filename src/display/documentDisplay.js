@@ -1,6 +1,6 @@
 // Parses text buffer and displays on screen
 class DocumentDisplay {
-	sheets = [];
+	pages = [];
 	pageGap = 20;
 	marginX = 20;
 	marginY = 20;
@@ -14,11 +14,11 @@ class DocumentDisplay {
 	}
 
 	get LastIndex(){
-		return this.sheets.length - 1;
+		return this.pages.length - 1;
 	}
 
 	HandleClick(event, caret){
-		this.sheets.some(p => p.ClaimCaretAtXY(caret, event.offsetX, event.offsetY));
+		this.pages.some(p => p.ClaimCaretAtXY(caret, event.offsetX, event.offsetY));
 		this.Render();
 		this.RenderCursor(caret);
 		return true;
@@ -31,19 +31,19 @@ class DocumentDisplay {
 		return true;
 	}
 
-	Parse(pages){
+	Parse(sections){
 		let x = this.marginX;
 		let y = this.marginY;
-		this.sheets = [];
-		for (let page of pages){
-			page.InitParse();
+		this.pages = [];
+		for (let section of sections){
+			section.InitParse();
 			do {
-				let lines = page.ParseNext(x, y);
-				let paper = new Paper(page, lines, x, y);
-				y += paper.Height;
+				let lines = section.ParseNext(x, y);
+				let page = new Page(section, lines, x, y);
+				y += page.Height;
 				y += this.pageGap;
-				this.sheets.push(paper);
-			} while (!page.IsParsed);
+				this.pages.push(page);
+			} while (!section.IsParsed);
 		}
 	}
 
@@ -51,12 +51,12 @@ class DocumentDisplay {
 		globalCanvasContext.clearRect(0, 0, this.width, this.height);
 		let scrollTop = this.scrollPosition;
 		let scrollBottom = scrollTop + this.height;
-		this.sheets.forEach(p => p.Render(scrollTop, scrollBottom));
+		this.pages.forEach(p => p.Render(scrollTop, scrollBottom));
 		return true;
 	}
 
 	RenderCursor(caret){
-		return this.sheets.some(p => p.RenderCursor(caret));
+		return this.pages.some(p => p.RenderCursor(caret));
 	}
 
 	HandleArrow(event, caret){
@@ -65,14 +65,14 @@ class DocumentDisplay {
 
 	up(caret){
 		let index = this.getCaretIndex(caret);
-		let paper = this.sheets[index];
-		if (paper.Up(caret)){
+		let page = this.pages[index];
+		if (page.Up(caret)){
 			return true;
 		}
 		else if (index > 0){
 			--index;
-			let previousPaper = this.sheets[index];
-			return previousPaper.PutCaretAtLastX(caret);
+			let previousPage = this.pages[index];
+			return previousPage.PutCaretAtLastX(caret);
 		}
 		else {
 			console.log("Ignored.  Already at start of document.");
@@ -82,14 +82,14 @@ class DocumentDisplay {
 
 	down(caret){
 		let index = this.getCaretIndex(caret);
-		let paper = this.sheets[index];
-		if (paper.Down(caret)){
+		let page = this.pages[index];
+		if (page.Down(caret)){
 			return true;
 		}
 		else if (index < this.LastIndex){
 			++index;
-			let nextPaper = this.sheets[index];
-			return nextPaper.PutCaretAtFirstX(caret);
+			let nextPage = this.pages[index];
+			return nextPage.PutCaretAtFirstX(caret);
 		}
 		else {
 			console.log("Ignored.  Already at end of document.");
@@ -98,6 +98,6 @@ class DocumentDisplay {
 	}
 
 	getCaretIndex(caret){
-		return this.sheets.findIndex(p => p.HasCaret(caret));
+		return this.pages.findIndex(p => p.HasCaret(caret));
 	}
 }
