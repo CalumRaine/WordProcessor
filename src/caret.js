@@ -108,6 +108,6 @@ class Caret {
 	}
 
 	HandleEnter(){
-		return this.page.ElementBreak(this);
+		return this.section.ElementBreak(this);
 	}
 }
