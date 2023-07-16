@@ -5,6 +5,11 @@ This prototype is nowhere near completion.
 
 
 
+## Installation
+
+Download the `src` directory and open [index.html](./src/index.html) in a web browser.
+
+
 ## To Do
 
 * Improve re-rendering performance when scrolling
