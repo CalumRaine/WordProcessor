@@ -5,7 +5,7 @@
 
 ## Blank line nightmare
 
-In [blog 3](blog3.md) I described how the caret adopts its styling from whichever character owns it.  This leaves an issue in that a blank line with no characters therefore has no height or styling, yet we all know that moving a caret to a blank line is a fundamental part of word processing.  
+In [blog 3](blog3.md) I described how the caret adopts its styling from whichever character owns it.  This leaves an issue in that a blank line with no characters therefore has no height or styling, yet we all know how moving a caret to a blank line is a fundamental part of word processing.  
 
 
 

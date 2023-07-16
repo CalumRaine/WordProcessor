@@ -6,8 +6,8 @@
 ## Canvas or HTML?
 
 There seem to be two obvious routes to approaching this browser-based problem.
-1. Reinventing the wheel and rendering every pixel to the canvas
-2. Simply adding an editing capability to the existing markup formats (HTML) and rendering solutions (browsers), which are already excellent
+1. Reinvent the wheel and render every pixel to the canvas
+2. Add edit capability to an existing markup format (HTML) and renderer (browser), which are already excellent
 
 
 
@@ -25,11 +25,11 @@ This gives us full control.
 
 ### No, choose HTML
 
-Browsers already offer the `contenteditable` and `designMode` attributes, which are highly exciting and offer a lot of promise.  Both of these methods appear to leap you toward 90% completion but unfortunately both fall down for similar reasons.  
+Browsers already offer the `contenteditable` and `designMode` attributes, which are highly exciting and offer a lot of promise.  Both methods allow you to leap toward 90% completion but unfortunately both fall down for similar reasons.  
 
 The `contenteditable` attribute falls down when navigating via the arrow keys.  It handles movement within the active element very well but moving up and down between elements requires knowledge of character position.  This is not impossible but certainly isn't trivial.  It leads me back to the question from [blog 1](blog1.md): which kind of challenge do you want to solve?
 
-The `designMode` attribute handles caret navigation brilliantly but does rely on a deprecated `execCommand` API.  Realistically, it will probably remain safe to use for quite some time but do you want to invest so many hours into a deprecated API?  It also handles nested lists marvellously but does come with quirks, such as adding `<br>` and `<div>` elements when leaping out of lists.  If we agree that any route I choose will consume hours of my life, would I prefer to use those hours being creative or use those hours tackling hacky workarounds?
+The `designMode` attribute handles caret navigation brilliantly but does rely on a deprecated `execCommand` API.  Realistically, it will probably remain safe to use for quite some time but do you want to invest so many hours into a deprecated API?  It also handles nested lists marvellously but does come with quirks, such as adding `<br>` and `<div>` elements when breaking out of lists.  If we agree that any route I choose will consume hours of my life, would I prefer to use those hours being creative or use those hours tackling hacky workarounds?
 
 
 
