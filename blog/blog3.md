@@ -34,14 +34,14 @@ I have currently settled on the following structure:
 * Document
     * Content
         * Sections
-            * Elements
-                * Words
-                    * Characters\*
+        * Elements
+        * Words
+        * Characters\*
     * Display
         * Pages
-            * Lines
-                * Wrapped words
-                    * Characters\*
+        * Lines
+        * Wrapped words
+        * Characters\*
     * Caret
 
 \* _(Same object, shared)_
