@@ -13,6 +13,7 @@ Download the [src](./src/) directory and open [index.html](./src/index.html) in 
 ## To Do
 
 * Improve re-rendering performance when scrolling
+* Make the caret blink
 * List elements
 * Text alignment (center/justify)
 * Underline text
