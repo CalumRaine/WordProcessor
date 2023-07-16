@@ -75,11 +75,11 @@ class CalumDocument extends HTMLCanvasElement {
 	}
 
 	handleEnter(event){
-		return event.ctrlKey ? this.content.PageBreak(this.caret) : this.caret.HandleEnter();
+		return event.ctrlKey ? this.content.SectionBreak(this.caret) : this.caret.HandleEnter();
 	}
 
 	render(){
-		this.display.Parse(this.content.Pages);
+		this.display.Parse(this.content.Sections);
 		this.display.Render();
 		this.display.RenderCursor(this.caret);
 	}

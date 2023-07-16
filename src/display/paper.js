@@ -9,10 +9,10 @@ class Paper {
 	documentX = 0;
 	documentY = 0;
 	onScreen = false;
-	page = null
+	section = null
 
-	constructor(page, lines, x, y){
-		this.page = page;
+	constructor(section, lines, x, y){
+		this.section = section;
 		this.lines = lines;
 		this.documentX = x;
 		this.documentY = y;
@@ -48,11 +48,11 @@ class Paper {
 	}
 
 	HasCaret(caret){
-		return caret.page == this.page && this.lines.some(l => l.HasCaret(caret));
+		return caret.section == this.section && this.lines.some(l => l.HasCaret(caret));
 	}
 
 	RenderCursor(caret){
-		return caret.page == this.page && this.lines.some(l => l.RenderCursor(caret));
+		return caret.section == this.section && this.lines.some(l => l.RenderCursor(caret));
 	}
 
 	Render(scrollTop, scrollBottom){
@@ -79,12 +79,12 @@ class Paper {
 	}
 
 	PutCaretAtFirstX(caret){
-		caret.page = this.page;
+		caret.section = this.section;
 		return this.lines[0].PutCaretAtX(caret, caret.DocumentX);
 	}
 
 	PutCaretAtLastX(caret){
-		caret.page = this.page;
+		caret.section = this.section;
 		return this.lines[this.LastIndex].PutCaretAtX(caret, caret.DocumentX);
 	}
 

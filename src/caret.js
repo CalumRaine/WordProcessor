@@ -2,7 +2,7 @@
 class Caret {
 	static RIGHT = 1;
 	static LEFT = 2;
-	page = null;
+	section = null;
 	element = null;
 	word = null;
 	character = null;

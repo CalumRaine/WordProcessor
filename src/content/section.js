@@ -1,5 +1,5 @@
 // Content page
-class Page {
+class Section {
 	elements = [];
 	parseCursor = 0;
 	bodyWidth = 500;
@@ -43,25 +43,25 @@ class Page {
 	}
 
 	IsCaretAtStart(caret){
-		return caret.page == this && (this.Empty || this.elements[0].IsCaretAtStart(caret));
+		return caret.section == this && (this.Empty || this.elements[0].IsCaretAtStart(caret));
 	}
 
 	IsCaretAtEnd(caret){
-		return caret.page == this && this.elements[this.LastIndex].IsCaretAtEnd(caret);
+		return caret.section == this && this.elements[this.LastIndex].IsCaretAtEnd(caret);
 	}
 
 	PutCaretAtStart(caret){
-		caret.page = this;
+		caret.section = this;
 		return this.elements[0].PutCaretAtStart(caret);
 	}
 
 	PutCaretAtEnd(caret){
-		caret.page = this;
+		caret.section = this;
 		return this.elements[this.LastIndex].PutCaretAtEnd(caret);
 	}
 
 	PutCaretAtLast(caret){
-		caret.page = this;
+		caret.section = this;
 		return this.elements[this.LastIndex].PutCaretAtStart(caret);
 	}
 
@@ -199,7 +199,7 @@ class Page {
 		return true;
 	}
 
-	PageBreak(caret){
+	SectionBreak(caret){
 		let index = this.getCaretIndex(caret);
 		let element = this.elements[index];
 		let brokenElement = element.ElementBreak(caret);
@@ -207,8 +207,8 @@ class Page {
 		this.elements.splice(index + 1, 0, brokenElement);
 		let toExtract = this.LastIndex - index;
 		let extractedElements = this.elements.splice(index + 1, toExtract);
-		let newPage = new Page(extractedElements.length == 0 ? null : extractedElements);
-		return newPage;
+		let newSection = new Section(extractedElements.length == 0 ? null : extractedElements);
+		return newSection;
 	}
 
 	ElementBreak(caret){
